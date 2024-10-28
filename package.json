@@ -1,0 +1,23 @@
+{
+  "name": "debrid-2.0",
+  "version": "1.0.1",
+  "description": "An easy way to search and download for torrents via real debrid.",
+  "main": "app.js",
+  "dependencies": {
+    "axios": "^1.7.7",
+    "bootstrap": "^5.3.3",
+    "dotenv": "^16.4.5",
+    "express": "latest",
+    "multer": "^1.4.5-lts.1",
+    "mysql": "latest",
+    "node-fetch": "^3.3.2",
+    "nodemon": "latest",
+    "path": "latest"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon app.js"
+  },
+  "author": "BakaBoi341",
+  "license": "ISC"
+}

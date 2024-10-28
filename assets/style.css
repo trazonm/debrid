@@ -1,0 +1,60 @@
+body {
+	background-color: black;
+    color: rgb(106, 225, 255);
+}
+
+.display-1 {
+	color: red;
+}
+
+.modal-body {
+    max-height: 60vh; /* Limit the height of the modal body */
+    overflow-y: auto; /* Allow vertical scrolling */
+    height: 60vh;
+}
+
+.modal-dialog {
+    max-width: 90%; /* Ensure modal does not take full width */
+    margin: auto; /* Center modal */
+}
+.modal-footer, .modal-header {
+    background-color: rgba(27, 27, 27, 0.911) !important;
+}
+#link {
+    max-width: 200px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+td {
+    max-width: 200px;
+    word-wrap: break-word
+}
+
+#debrid {
+    font-family: 'Long distance call', sans-serif;
+    color: rgb(106, 188, 255);
+    font-weight: 700;
+    font-size: 8em;
+}
+
+#searchInput {
+    color: rgb(106, 225, 255);
+}
+
+.input-group {
+    max-width: 50vw;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+/* Background Particle Canvas */
+#particleCanvas {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	z-index: -1;
+	background-color: black;
+}
