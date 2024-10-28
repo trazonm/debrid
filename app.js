@@ -30,6 +30,7 @@ app.get('/', function (req, res) {
 // New endpoint for making API call to Jackett
 app.get('/search', async function (req, res) {
     console.log("Received search request");
+    console.log(process.env);
     const query = req.query.query;
     const apiURL = `https://jackett-service.gleeze.com/api/v2.0/indexers/all/results?apikey=${process.env.JACKETT_API_KEY}&Query=${query}`;
 
@@ -180,7 +181,7 @@ app.get('/checkRedirect', async function (req, res) {
         // If we get here, it means no redirects occurred.
         res.json({
             redirects: 0,
-            finalUrl: 'this is a torrent file' // Get the final URL after all redirects
+            finalUrl: null // Get the final URL after all redirects
         });
     } catch (error) {
         if (error.response && error.response.status === 302) {
@@ -211,8 +212,8 @@ async function selectFiles(torrentId, headers) {
     });
 }
 
-app.listen(5001, function () {
-    console.log('Listening at port 5001...');
+app.listen(5002, function () {
+    console.log('Listening at port 5002...');
 });
 
 module.exports = app;

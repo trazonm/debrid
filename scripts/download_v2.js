@@ -14,78 +14,45 @@ export function generateLink(link, downloadCell) {
         downloadCell.appendChild(progressText);
     }
 
+    (async () => {
+        let id;
+        try {
+            if (link.includes('magnet')) {
+                const response = await fetch(`/addMagnet?link=${encodeURIComponent(link)}`);
+                const data = await response.json();
+                id = data.id;
+            } else {
+                const response = await fetch(`/checkRedirect?link=${encodeURIComponent(link)}`);
+                const data = await response.json();
+                const redirectUrl = data.finalUrl || link; // Use finalUrl or handle accordingly
 
-    if (link.includes('magnet')) {
-        fetch(`/addMagnet?link=${encodeURIComponent(link)}`)
-            .then(response => response.json())
-            .then(data => {
-                const id = data.id;
-                if (!id) throw new Error('No ID returned from the server');
-                checkProgress(id, progressText, downloadCell);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while generating the link.');
-                if (downloadButton) downloadButton.style.display = 'block';
-            });
-
-    } else {
-        fetch(`checkRedirect?link=${encodeURIComponent(link)}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json(); // Parse the JSON response
-            })
-            .then(data => {
-                // Extract the redirect URL from the data
-                const redirectUrl = data.finalUrl || null; // Use finalUrl or handle accordingly
                 if (redirectUrl.includes('magnet')) {
-                    fetch(`/addMagnet?link=${encodeURIComponent(redirectUrl)}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            const id = data.id;
-                            if (!id) throw new Error('No ID returned from the server');
-                            checkProgress(id, progressText, downloadCell);
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert('An error occurred while generating the link.');
-                            if (downloadButton) downloadButton.style.display = 'block';
-                        });
+                    const response = await fetch(`/addMagnet?link=${encodeURIComponent(redirectUrl)}`);
+                    const data = await response.json();
+                    id = data.id;
                 } else {
-                    fetch(link)
-                        .then(response => response.blob())
-                        .then(blob => {
-                            const formData = new FormData();
-                            formData.append('file', blob, 'torrent');
+                    const file = await fetch(redirectUrl);
+                    const blob = await file.blob();
+                    const formData = new FormData();
+                    formData.append('file', blob, 'torrent');
 
-                            return fetch('/addTorrent', {
-                                method: 'PUT',
-                                body: formData
-                            });
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            const id = data.id || data.torrentId;
-                            if (!id) throw new Error('No ID returned from the server');
-                            checkProgress(id, progressText, downloadCell);
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert('An error occurred while generating the link.');
-                            if (downloadButton) downloadButton.style.display = 'block';
-                            progressBarContainer.style.display = 'none';
-                        });
+                    const response = await fetch('/addTorrent', {
+                        method: 'PUT',
+                        body: formData
+                    });
+                    const data = await response.json();
+                    id = data.id || data.torrentId;
                 }
-            })
-            .catch(error => {
-                console.log('Error:', error);
-                alert('An error occurred while generating the link.');
-                if (downloadButton) downloadButton.style.display = 'block';
-            });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while generating the link.');
+            if (downloadButton) downloadButton.style.display = 'block';
+            return;
+        }
 
-    }
+        checkProgress(id, progressText, downloadCell);
+    })();
 
 }
 
