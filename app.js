@@ -30,7 +30,6 @@ app.get('/', function (req, res) {
 // New endpoint for making API call to Jackett
 app.get('/search', async function (req, res) {
     console.log("Received search request");
-    console.log(process.env);
     const query = req.query.query;
     const apiURL = `https://jackett-service.gleeze.com/api/v2.0/indexers/all/results?apikey=${process.env.JACKETT_API_KEY}&Query=${query}`;
 

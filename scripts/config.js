@@ -1,5 +1,5 @@
 // config.js
-let itemsPerPage = 12; // Number of items per page
+let itemsPerPage = 10000; // Number of items per page
 let currentPage = 1;
 let paginatedData = [];
 

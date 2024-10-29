@@ -16,6 +16,7 @@ export function showPage(page) {
 
         const titleCell = document.createElement('td');
         titleCell.textContent = item.Title || 'N/A';
+        titleCell.setAttribute("id", "torrent-title");
 
         const sizeCell = document.createElement('td');
         sizeCell.textContent = formatSize(item.Size);
