@@ -21,6 +21,8 @@ app.use('/scripts', express.static(path.join(__dirname, 'scripts'), {
     }
 }));
 
+// disbale browser caching
+app.use(nocache());
   
 // For /index page
 app.get('/', function (req, res) {
@@ -217,5 +219,4 @@ app.listen(5001, function () {
     console.log('Listening at port 5001...');
 });
 
-app.use(nocache());
 module.exports = app;
