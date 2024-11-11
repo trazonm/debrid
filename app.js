@@ -4,6 +4,7 @@ var path = require('path');
 var axios = require('axios');
 const qs = require('querystring');
 const multer = require('multer'); // Import multer
+const nocahce   = require('nocahce');
 
 
 var app = express();
@@ -14,11 +15,12 @@ const upload = multer({
 }); // Store files in memory
 
 app.use('/assets', express.static(__dirname + '/assets'));
-app.use('/scripts', express.static(__dirname + '/scripts', {
-    setHeaders: (res, path) => {
-      res.setHeader("Cache-Control", "no-store");
+app.use('/scripts', express.static(path.join(__dirname, 'scripts'), {
+    setHeaders: (res) => {
+        res.setHeader('Content-Type', 'application/javascript');
     }
-  }));
+}));
+
   
 // For /index page
 app.get('/', function (req, res) {
@@ -211,8 +213,9 @@ async function selectFiles(torrentId, headers) {
     });
 }
 
-app.listen(5002, function () {
-    console.log('Listening at port 5002...');
+app.listen(5001, function () {
+    console.log('Listening at port 5001...');
 });
 
+app.use(nocahce());
 module.exports = app;

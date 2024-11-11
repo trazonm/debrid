@@ -1,6 +1,6 @@
 // ui.js
 import { getItemsPerPage, getPaginatedData } from './config.js'; // Import the functions
-import { generateLink } from './download_v2.js';
+import { generateLink } from './download.js';
 
 export function showPage(page) {
     const tableBody = document.getElementById('resultsTableBody');
