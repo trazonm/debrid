@@ -4,7 +4,7 @@ var path = require('path');
 var axios = require('axios');
 const qs = require('querystring');
 const multer = require('multer'); // Import multer
-const nocahce   = require('nocahce');
+const nocache   = require('nocache');
 
 
 var app = express();
@@ -217,5 +217,5 @@ app.listen(5001, function () {
     console.log('Listening at port 5001...');
 });
 
-app.use(nocahce());
+app.use(nocache());
 module.exports = app;
