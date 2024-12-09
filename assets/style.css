@@ -1,6 +1,6 @@
 body {
   background-color: black;
-  color: rgb(106, 225, 255);
+  color: rgba(219, 42, 42, 0.723);
 }
 
 .display-1 {
@@ -40,13 +40,13 @@ td {
 
 #debrid {
   font-family: 'Long distance call', sans-serif;
-  color: rgb(106, 188, 255);
+  color: rgb(219, 42, 42);
   font-weight: 700;
   font-size: 8em;
 }
 
 #searchInput {
-  color: rgb(106, 225, 255);
+  color: rgb(233, 10, 10);
 }
 
 .input-group {

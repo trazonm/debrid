@@ -36,7 +36,7 @@ app.get('/search', async function (req, res) {
     console.log("Received search request");
     const query = req.query.query;
     const apiURL = `https://jackett-service.gleeze.com/api/v2.0/indexers/all/results?apikey=${process.env.JACKETT_API_KEY}&Query=${query}`;
-
+        
     try {
         const apiResponse = await axios.get(apiURL);
         res.json(apiResponse.data);

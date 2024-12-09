@@ -31,7 +31,7 @@ export function showPage(page) {
         const downloadCell = document.createElement('td');
 
         const downloadButton = document.createElement('button');
-        downloadButton.className = 'btn btn-outline-info';
+        downloadButton.className = 'btn btn-outline-danger';
         downloadButton.textContent = 'Generate?';
         downloadButton.onclick = () => generateLink(item.Link || item.MagnetUri, downloadCell);
         downloadCell.appendChild(downloadButton);
