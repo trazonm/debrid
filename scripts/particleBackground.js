@@ -79,7 +79,12 @@ function generateStatic() {
 	const imageData = ctx.createImageData(canvas.width, canvas.height);
 	const buffer = imageData.data;
 
-	for (let i = 0; i < buffer.length; i += 4) {
+	let pixelColorConstant = 4;
+	if (canvas.width > 1920) pixelColorConstant = 8;
+	if (canvas.width > 3000) pixelColorConstant = 40;
+
+
+	for (let i = 0; i < buffer.length; i += pixelColorConstant) {
 		const gray = Math.random() * 255;
 		buffer[i] = gray; // Red
 		buffer[i + 1] = gray; // Green
