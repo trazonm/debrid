@@ -90,7 +90,7 @@ const logFilePath = path.join(__dirname, 'iplog.json');
 
 const isPrivateIp = (ip) => {
     // Check for private IP ranges and localhost
-    return ip.startsWith('192.168.') || ip.startsWith('10.') || ip.startsWith('172.') || ip === '127.0.0.1' || ip === '::1';
+    return ip.startsWith('192.168.0') || ip === '127.0.0.1' || ip === '::1';
 };
 
 app.use(async (req, res, next) => {
