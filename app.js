@@ -5,6 +5,10 @@ const axios = require('axios');
 const qs = require('querystring');
 const multer = require('multer');
 const nocache = require('nocache');
+const helmet = require('helmet');
+const xssClean = require('xss-clean');
+
+
 
 const app = express();
 
@@ -24,16 +28,35 @@ const upload = multer({
 
 // Middleware
 app.use(nocache());
-// app.use('/manifest.json', (req, res) => {
-//     res.setHeader('Content-Type', 'application/json');
-//     res.sendFile(path.join(__dirname, 'manifest.json'));
-// });
-// app.use('/service-worker.js', (req, res) => {
-//     res.setHeader('Content-Type', 'application/javascript');
-//     res.sendFile(path.join(__dirname, 'service-worker.js'));
-// });
-const excludedFiles = ['app.js', 'Dockerfile', 'docker-compose.yml'];
 
+// Use Helmet middleware with frameguard enabled
+app.use(helmet({
+    frameguard: {
+        action: 'deny', // Prevent embedding in any frame
+    },
+}));
+
+// Define your CSP rules
+const cspPolicy = {
+    directives: {
+        defaultSrc: ["'self'"], // Only allow resources from the same origin
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdn.jsdelivr.net"], // Allow inline scripts and external CDN
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"], // Allow inline styles and Google Fonts
+        fontSrc: ["'self'", "https://fonts.gstatic.com"], // Allow fonts from Google Fonts
+        imgSrc: ["'self'", "data:", "https://example.com"], // Allow images from self, data URIs, and trusted sources
+        connectSrc: ["'self'", "https://api.example.com"], // Allow AJAX requests only from self and trusted API
+        objectSrc: ["'none'"], // Block the use of <object> tags
+        upgradeInsecureRequests: [], // Automatically upgrade HTTP requests to HTTPS
+    }
+};
+
+// Use Helmet to apply the CSP policy
+app.use(helmet.contentSecurityPolicy(cspPolicy));
+
+// XSS protection - sanitize user inputs to prevent XSS attacks
+app.use(xssClean());
+
+const excludedFiles = ['app.js', 'Dockerfile', 'docker-compose.yml'];
 app.use((req, res, next) => {
     const requestedFile = path.basename(req.url);
     if (excludedFiles.includes(requestedFile)) {
