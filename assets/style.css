@@ -49,7 +49,7 @@ td {
 #searchInput {
   font-family: 'Anime Ace', sans-serif;                                
   color: rgb(230, 230, 230);
-  font-size: clamp(8px, 1vw, 14px);
+  font-size: clamp(10px, 1vw, 14px);
 }
 
 #loadingSpinner {
