@@ -28,6 +28,10 @@ app.use('/manifest.json', (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     res.sendFile(path.join(__dirname, 'manifest.json'));
 });
+app.use('/service-worker.js', (req, res) => {
+    res.setHeader('Content-Type', 'application/javascript');
+    res.sendFile(path.join(__dirname, 'service-worker.js'));
+});
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use('/scripts', express.static(path.join(__dirname, 'scripts'), {
     setHeaders: (res) => res.setHeader('Content-Type', 'application/javascript'),
