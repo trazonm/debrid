@@ -152,7 +152,7 @@ const getRealDebridHeaders = () => ({
 });
 
 
-app.set('views', path.join(__dirname, './views')); // Set views directory
+app.set('views', path.join(__dirname, 'views')); // Set views directory
 app.set('view engine', 'ejs'); // Use EJS as the template engine
 
 app.get('/iplog.html', (req, res) => {
