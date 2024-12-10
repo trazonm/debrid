@@ -3,9 +3,9 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-let numParticles = Math.floor((canvas.width * canvas.height) / 6000);
+let numParticles = Math.floor((canvas.width * canvas.height) / 5000);
 const particlesArray = [];
-const lightningBolts = [];
+const energyPulses = [];
 
 // Particle class
 class Particle {
@@ -13,16 +13,22 @@ class Particle {
 		this.x = Math.random() * canvas.width;
 		this.y = Math.random() * canvas.height;
 		this.size = Math.random() * 3 + 1;
-		this.speedX = Math.random() * 2 - 1;
-		this.speedY = Math.random() * 2 - 1;
-		this.color = `rgba(191, 44, 44, ${Math.random() * 0.7 + 0.3})`;
+		this.speedX = (Math.random() * 2 - 1) * 0.7;
+		this.speedY = (Math.random() * 2 - 1) * 0.7;
+		this.gradient = this.createGradient();
+	}
+
+	createGradient() {
+		const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+		gradient.addColorStop(0, `rgba(255, 69, 69, 0.8)`);
+		gradient.addColorStop(1, `rgba(191, 44, 44, 0.1)`);
+		return gradient;
 	}
 
 	update() {
 		this.x += this.speedX;
 		this.y += this.speedY;
 
-		// Wrap particles around edges
 		if (this.x > canvas.width) this.x = 0;
 		if (this.x < 0) this.x = canvas.width;
 		if (this.y > canvas.height) this.y = 0;
@@ -30,7 +36,7 @@ class Particle {
 	}
 
 	draw() {
-		ctx.fillStyle = this.color;
+		ctx.fillStyle = this.gradient;
 		ctx.beginPath();
 		ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
 		ctx.closePath();
@@ -38,53 +44,88 @@ class Particle {
 	}
 }
 
-// Lightning bolt class
-class Lightning {
+// Energy pulse class
+class EnergyPulse {
 	constructor() {
-		this.startX = Math.random() * canvas.width;
-		this.startY = Math.random() * canvas.height;
-		this.segments = this.createSegments();
-		this.life = 15; // Frames before the lightning disappears
-	}
-
-	createSegments() {
-		let segments = [];
-		let x = this.startX;
-		let y = this.startY;
-		let length = Math.random() * 150 + 50;
-
-		for (let i = 0; i < 10; i++) {
-			let angle = Math.random() * Math.PI * 2;
-			x += Math.cos(angle) * (length / 10);
-			y += Math.sin(angle) * (length / 10);
-			segments.push({ x, y });
-		}
-
-		return segments;
-	}
-
-	draw() {
-		ctx.strokeStyle = `rgba(191, 44, 44, ${this.life / 15})`;
-		ctx.lineWidth = 2;
-		ctx.shadowColor = 'rgba(255, 0, 0, 0.6)';
-		ctx.shadowBlur = 10;
-
-		ctx.beginPath();
-		ctx.moveTo(this.startX, this.startY);
-		for (let point of this.segments) {
-			ctx.lineTo(point.x, point.y);
-		}
-		ctx.stroke();
-		ctx.shadowBlur = 0;
+		this.x = Math.random() * canvas.width;
+		this.y = Math.random() * canvas.height;
+		this.maxSize = Math.random() * 40 + 20;
+		this.size = 0;
+		this.opacity = 1;
+		this.growthRate = Math.random() * 2 + 0.5;
+		this.fadeRate = 0.02;
 	}
 
 	update() {
-		this.life--;
+		this.size += this.growthRate;
+		this.opacity -= this.fadeRate;
 	}
+
+	draw() {
+		ctx.beginPath();
+		ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+		ctx.closePath();
+		ctx.strokeStyle = `rgba(255, 69, 69, ${this.opacity})`;
+		ctx.lineWidth = 1.5;
+		ctx.shadowColor = `rgba(255, 0, 0, ${this.opacity})`;
+		ctx.shadowBlur = 10;
+		ctx.stroke();
+		ctx.shadowBlur = 0;
+	}
+}
+
+// Generate TV static
+function generateStatic() {
+	const imageData = ctx.createImageData(canvas.width, canvas.height);
+	const buffer = imageData.data;
+
+	for (let i = 0; i < buffer.length; i += 4) {
+		const gray = Math.random() * 255;
+		buffer[i] = gray; // Red
+		buffer[i + 1] = gray; // Green
+		buffer[i + 2] = gray; // Blue
+
+		// Occasionally add red static
+		if (Math.random() < 0.01) {
+			buffer[i] = Math.random() * 255; // Red channel (intense red)
+			buffer[i + 1] = 0; // No green
+			buffer[i + 2] = 0; // No blue
+		}
+
+		buffer[i + 3] = 40; // Alpha (semi-transparent for blending)
+	}
+
+	ctx.putImageData(imageData, 0, 0);
+}
+
+// Generate more "flimsy" red glitch shapes
+function generateRedGlitch() {
+    // Randomize the size of the glitch
+    const glitchWidth = Math.random() * 250 + 50;
+    const glitchHeight = Math.random() * 15 + 5;
+
+    // Randomly generate the position of the glitch
+    const glitchX = Math.random() * canvas.width;
+    const glitchY = Math.random() * canvas.height;
+
+    // Randomize the "squigglyness" of the glitch by adding a little curve to its shape
+    ctx.fillStyle = `rgba(255, 0, 0, 0.6)`;
+
+    // Create a squiggly shape using a curve
+    ctx.beginPath();
+    ctx.moveTo(glitchX, glitchY);
+    for (let i = 0; i < glitchWidth; i++) {
+        // Use random variations in Y to make the glitch wavy
+        const yOffset = Math.random() * glitchHeight - glitchHeight / 2;
+        ctx.lineTo(glitchX + i, glitchY + yOffset);
+    }
+    ctx.closePath();
+    ctx.fill();
 }
 
 // Initialize particles
 function initParticles() {
+	particlesArray.length = 0;
 	for (let i = 0; i < numParticles; i++) {
 		particlesArray.push(new Particle());
 	}
@@ -92,16 +133,25 @@ function initParticles() {
 
 // Animate particles
 function animateParticles() {
-	ctx.fillStyle = 'black';
+	ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+	// Update and draw particles
 	for (let particle of particlesArray) {
 		particle.update();
 		particle.draw();
 	}
 
 	connectParticles();
-	handleLightning();
+	handleEnergyPulses();
+
+	// Add static effect
+	generateStatic();
+
+	// Add occasional red glitch
+	if (Math.random() < 0.08) {
+		generateRedGlitch();
+	}
 
 	requestAnimationFrame(animateParticles);
 }
@@ -115,8 +165,8 @@ function connectParticles() {
 			const distance = Math.sqrt(dx * dx + dy * dy);
 
 			if (distance < 100) {
-				ctx.strokeStyle = `rgba(191, 44, 44, ${1 - distance / 100})`;
-				ctx.lineWidth = 0.3;
+				ctx.strokeStyle = `rgba(255, 69, 69, ${1 - distance / 100})`;
+				ctx.lineWidth = 0.4;
 				ctx.beginPath();
 				ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
 				ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
@@ -126,21 +176,19 @@ function connectParticles() {
 	}
 }
 
-// Handle lightning sparks
-function handleLightning() {
-	// Lightning strikes occasionally
-	if (Math.random() < 0.05) {
-		lightningBolts.push(new Lightning());
+// Handle energy pulses
+function handleEnergyPulses() {
+	if (Math.random() < 0.02) {
+		energyPulses.push(new EnergyPulse());
 	}
 
-	// Draw and update lightning bolts
-	for (let i = lightningBolts.length - 1; i >= 0; i--) {
-		lightningBolts[i].draw();
-		lightningBolts[i].update();
+	// Update and draw energy pulses
+	for (let i = energyPulses.length - 1; i >= 0; i--) {
+		energyPulses[i].update();
+		energyPulses[i].draw();
 
-		// Remove lightning bolt if its life is over
-		if (lightningBolts[i].life <= 0) {
-			lightningBolts.splice(i, 1);
+		if (energyPulses[i].opacity <= 0) {
+			energyPulses.splice(i, 1);
 		}
 	}
 }
@@ -150,8 +198,7 @@ window.addEventListener('resize', () => {
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
 
-	numParticles = Math.floor((canvas.width * canvas.height) / 6000);
-	particlesArray.length = 0;
+	numParticles = Math.floor((canvas.width * canvas.height) / 5000);
 	initParticles();
 });
 

@@ -9,12 +9,13 @@ export function sendSearchRequest() {
 
     // Show loading spinner
     const loadingSpinner = document.getElementById('loadingSpinner');
-    loadingSpinner.style.display = 'inline-block';
+    // loadingSpinner.style.display = 'inline-block';
+    document.getElementById('loadingSpinner').style.visibility = 'visible';
 
     fetch(url)
         .then(response => response.json())
         .then(data => {
-            loadingSpinner.style.display = 'none';
+            document.getElementById('loadingSpinner').style.visibility = 'hidden';
             const filteredData = data.Results
                 .filter(item => item.Seeders > 0)
                 .sort((a, b) => b.Seeders - a.Seeders);
@@ -27,7 +28,7 @@ export function sendSearchRequest() {
         })
         .catch(error => {
             console.error('Error:', error);
-            loadingSpinner.style.display = 'none';
+            document.getElementById('loadingSpinner').style.visibility = 'hidden';
             alert('An error occurred. Please try again. Wagga');
         });
 }

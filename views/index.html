@@ -4,8 +4,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Debrid 2.0</title>
-	<!-- <link href="https://fonts.cdnfonts.com/css/anime-ace" rel="stylesheet"> -->
+	<title>Debrid</title>
+	<link href="https://fonts.cdnfonts.com/css/anime-ace" rel="stylesheet">
 	<link href="https://fonts.cdnfonts.com/css/long-distance-call" rel="stylesheet">
 	<link rel="icon" type="image/jpeg" href="/assets/favicon.jpg">
 	<link href="/assets/style.css" rel="stylesheet">
@@ -21,13 +21,13 @@
 				<h1 class="display-1"></h1>
 			</div> -->
 			<div class="col d-flex flex-column align-items-center justify-content-center">
-				<h1 id="debrid">Debrid 2.0</h1>
+				<h1 id="debrid">Debrid 2.1</h1>
 				<div class="input-group input-group-sm mb-3">
-					<input type="text" id="searchInput" class="form-control" placeholder="Search for Torrents"
+					<input type="text" id="searchInput" class="form-control" placeholder="Search the BakaNet"
 						aria-label="Search input" aria-describedby="search-button">
 					<button class="btn btn-outline-danger" type="button" id="search-button">Search</button>
 				</div>
-				<div id="loadingSpinner" class="spinner-border text-danger" role="status" style="display: none;">
+				<div id="loadingSpinner" class="spinner-border text-danger" role="status" style="visibility: hidden;">
 					<span class="visually-hidden">Loading...</span>
 				</div>
 			</div>
@@ -39,7 +39,7 @@
 
 	<!-- Modal -->
 	<div class="modal fade text-center" id="resultsModal" tabindex="-1" aria-labelledby="resultsModalLabel" aria-hidden="true">
-			<div class="modal-dialog modal-lg">
+			<div class="modal-dialog modal-lg modal-dialog-centered">
 				<div class="modal-content">
 					<div class="modal-header">
 						<h5 class="modal-title" id="resultsModalLabel">Search Results</h5>

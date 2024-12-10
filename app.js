@@ -1,222 +1,161 @@
 require('dotenv').config();
-var express = require('express');
-var path = require('path');
-var axios = require('axios');
+const express = require('express');
+const path = require('path');
+const axios = require('axios');
 const qs = require('querystring');
-const multer = require('multer'); // Import multer
-const nocache   = require('nocache');
+const multer = require('multer');
+const nocache = require('nocache');
 
-
-var app = express();
+const app = express();
 
 // Configure multer for file uploads
 const upload = multer({
-    storage: multer.memoryStorage()
-}); // Store files in memory
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = ['application/x-bittorrent'];
+        if (allowedTypes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Invalid file type. Only torrent files are allowed.'));
+        }
+    },
+});
 
-app.use('/assets', express.static(__dirname + '/assets'));
+// Middleware
+app.use(nocache());
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use('/scripts', express.static(path.join(__dirname, 'scripts'), {
-    setHeaders: (res) => {
-        res.setHeader('Content-Type', 'application/javascript');
-    }
+    setHeaders: (res) => res.setHeader('Content-Type', 'application/javascript'),
 }));
 
-// disbale browser caching
-app.use(nocache());
-  
-// For /index page
-app.get('/', function (req, res) {
-    res.sendFile('index.html', {
-        root: path.join(__dirname, './views')
-    });
+// Utility: Async wrapper to handle errors
+const asyncHandler = (fn) => (req, res, next) => fn(req, res, next).catch(next);
+
+// Utility: Reusable Real-Debrid headers
+const getRealDebridHeaders = () => ({
+    Authorization: process.env.REAL_DEBRID_AUTH,
 });
 
-// New endpoint for making API call to Jackett
-app.get('/search', async function (req, res) {
-    console.log("Received search request");
-    const query = req.query.query;
-    const apiURL = `https://jackett-service.gleeze.com/api/v2.0/indexers/all/results?apikey=${process.env.JACKETT_API_KEY}&Query=${query}`;
-        
-    try {
-        const apiResponse = await axios.get(apiURL);
-        res.json(apiResponse.data);
-    } catch (error) {
-        console.error('Error fetching data from Jackett API:', error);
-        res.status(500).json({
-            error: 'Failed to fetch data from Jackett API'
-        });
-    }
+// Serve the index page
+app.get('/', (req, res) => {
+    res.sendFile('index.html', { root: path.join(__dirname, './views') });
 });
 
-// Endpoint for adding a magnet link
-app.get('/addMagnet', async function (req, res) {
-    console.log("Received request to add magnet link");
-    const link = req.query.link;
-
-    if (link && link.includes('magnet:')) {
-        const apiURL = 'https://api.real-debrid.com/rest/1.0/torrents/addMagnet';
-        const headers = {
-            'Authorization': process.env.REAL_DEBRID_AUTH,
-            'Content-Type': 'application/x-www-form-urlencoded'
-        };
-
-        const data = qs.stringify({
-            magnet: link
-        });
-
-        try {
-            const apiResponse = await axios.post(apiURL, data, {
-                headers: headers
-            });
-            console.log('Add magnet response:', apiResponse.data);
-
-            const selectFilesResponse = await selectFiles(apiResponse.data.id, headers);
-            console.log('Select files status:', selectFilesResponse.status);
-
-            res.json(apiResponse.data);
-        } catch (error) {
-            console.error('Error fetching data from Real-Debrid API:', error);
-            res.status(500).json({
-                error: 'Failed to fetch data from Real-Debrid API'
-            });
-        }
-    } else {
-        res.status(400).json({
-            error: 'Invalid magnet link provided'
-        });
-    }
-});
-
-// Endpoint for adding a torrent file
-app.put('/addTorrent', upload.single('file'), async function (req, res) {
-    console.log("Received request to add torrent file");
-
-    const torrentFile = req.file;
-
-    if (!torrentFile) {
-        return res.status(400).json({
-            error: 'No torrent file provided'
-        });
+// Search endpoint
+app.get('/search', asyncHandler(async (req, res) => {
+    const query = req.query.query?.trim();
+    console.log("Received search query: ", query);
+    if (!query) {
+        return res.status(400).json({ error: 'Query parameter is required' });
     }
 
-    const apiURL = 'https://api.real-debrid.com/rest/1.0/torrents/addTorrent';
+    const apiURL = `https://jackett-service.gleeze.com/api/v2.0/indexers/all/results?apikey=${process.env.JACKETT_API_KEY}&Query=${encodeURIComponent(query)}`;
+
+    const { data } = await axios.get(apiURL);
+    res.json(data);
+}));
+
+// Add magnet link
+app.get('/addMagnet', asyncHandler(async (req, res) => {
+    const link = req.query.link?.trim();
+    console.log("Received request to add magnet: ", link);
+
+    if (!link || !link.startsWith('magnet:')) {
+        return res.status(400).json({ error: 'Invalid magnet link provided' });
+    }
+
+    const data = qs.stringify({ magnet: link });
+    const headers = getRealDebridHeaders();
+
+    const { data: response } = await axios.post('https://api.real-debrid.com/rest/1.0/torrents/addMagnet', data, { headers });
+    console.log(response);
+    await selectFiles(response.id, headers);
+    res.json(response);
+}));
+
+// Add torrent file
+app.put('/addTorrent', upload.single('file'), asyncHandler(async (req, res) => {
+
+    if (!req.file) {
+        return res.status(400).json({ error: 'No torrent file provided' });
+    }
+
+    console.log('Received request to add torrent file:', req.file);
+
     const headers = {
-        'Authorization': process.env.REAL_DEBRID_AUTH,
-        'Content-Type': 'application/octet-stream' // Set content type to binary
+        ...getRealDebridHeaders(),
+        'Content-Type': 'application/octet-stream',
     };
 
-    try {
-        // Step 2: Upload the binary data of the torrent file to Real-Debrid
-        const uploadResponse = await axios.put(apiURL, torrentFile.buffer, {
-            headers: headers
-        });
+    const { data } = await axios.put('https://api.real-debrid.com/rest/1.0/torrents/addTorrent', req.file.buffer, { headers });
+    await selectFiles(data.id, headers);
+    res.json(data);
+}));
 
-        console.log('Add torrent response:', uploadResponse.data);
+// Check torrent progress
+app.get('/checkProgress/:id', asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const apiURL = `https://api.real-debrid.com/rest/1.0/torrents/info/${id}`;
 
-        const selectFilesResponse = await selectFiles(uploadResponse.data.id, headers);
-        console.log('Select files status:', selectFilesResponse.status);
+    const { data } = await axios.get(apiURL, { headers: getRealDebridHeaders() });
+    res.json(data);
+}));
 
-        res.json(uploadResponse.data);
-    } catch (error) {
-        console.error('Error processing torrent:', error);
-        res.status(500).json({
-            error: 'Failed to process torrent'
-        });
+// Unrestrict a link
+app.get('/unrestrict', asyncHandler(async (req, res) => {
+    const link = req.query.link?.trim();
+    if (!link) {
+        return res.status(400).json({ error: 'Link parameter is required' });
     }
-});
-
-// Function to check progress of a torrent
-app.get('/checkProgress/:id', async function (req, res) {
-    const torrentId = req.params.id;
-    const apiURL = `https://api.real-debrid.com/rest/1.0/torrents/info/${torrentId}`;
-    const headers = {
-        'Authorization': process.env.REAL_DEBRID_AUTH
-    };
-
-    try {
-        const apiResponse = await axios.get(apiURL, {
-            headers: headers
-        });
-        res.json(apiResponse.data);
-    } catch (error) {
-        console.error('Error checking progress from Real-Debrid API:', error);
-        res.status(500).json({
-            error: 'Failed to fetch progress from Real-Debrid API'
-        });
-    }
-});
-
-app.get('/unrestrict', async function (req, res) {
-    console.log('Received request to unrestrict a link');
-    const link = req.query.link;
+    console.log("Received request to unrestrict link: ", link);
     const data = qs.stringify({
         link: link
     });
-    const apiURL = `https://api.real-debrid.com/rest/1.0/unrestrict/link?link=${link}`;
-    const headers = {
-        'Authorization': process.env.REAL_DEBRID_AUTH
-    };
 
-    try {
-        const apiResponse = await axios.post(apiURL, data, {
-            headers: headers
-        });
-        console.log(apiResponse.data);
-        res.json(apiResponse.data);
-    } catch (error) {
-        console.error('Error unrestricting link from Real-Debrid API:', error.response ? error.response.data : error.message);
-        res.status(500).json({
-            error: 'Failed to unrestrict link from Real-Debrid API'
-        });
+    const apiURL = `https://api.real-debrid.com/rest/1.0/unrestrict/link`;
+    const {response}  = await axios.post(apiURL, data, { headers: getRealDebridHeaders() });
+    console.log(`Unrestricted link endpoint has returned data: ${JSON.stringify(response.data)}. The response status was ${response.status} ${response.statusText}`);
+    res.json(response.data);
+}));
+
+// Check redirect
+app.get('/checkRedirect', asyncHandler(async (req, res) => {
+    const link = req.query.link?.trim();
+    console.log("Received request to check redirects for: ", link);
+    if (!link) {
+        return res.status(400).json({ error: 'Link parameter is required' });
     }
-});
 
-app.get('/checkRedirect', async function (req, res) {
-    console.log('Received request to check redirect');
-    const link = req.query.link;
     try {
-        const response = await axios({
-            url: link,
-            method: 'get',
-            maxRedirects: 0
-        });
-
-        // If we get here, it means no redirects occurred.
-        res.json({
-            redirects: 0,
-            finalUrl: null // Get the final URL after all redirects
-        });
+        const { headers } = await axios.get(link, { maxRedirects: 0 });
+        res.json({ redirects: 0, finalUrl: null });
     } catch (error) {
-        if (error.response && error.response.status === 302) {
-            // Handle the 302 redirect case
+        if (error.response?.status === 302) {
+            console.log("Redirect found");
             const redirectLocation = error.response.headers.location;
-            console.log('Redirect detected:', redirectLocation);
-            res.json({
-                redirects: 1, // Indicate one redirect
-                finalUrl: redirectLocation
-            });
+            res.json({ redirects: 1, finalUrl: redirectLocation });
         } else {
-            console.error(error);
-            res.status(204).json({
-                message: 'No redirects, or an unexpected error occurred'
-            });
+            throw error;
         }
     }
-});
+}));
 
-
-// Function to select files
+// Function: Select files
 async function selectFiles(torrentId, headers) {
-    const selectFilesData = qs.stringify({
-        files: 'all'
-    });
-    return await axios.post(`https://api.real-debrid.com/rest/1.0/torrents/selectFiles/${torrentId}`, selectFilesData, {
-        headers: headers
-    });
+    console.log("Received request to select files for torrent id:", torrentId);
+    const data = qs.stringify({ files: 'all' });
+    await axios.post(`https://api.real-debrid.com/rest/1.0/torrents/selectFiles/${torrentId}`, data, { headers });
 }
 
-app.listen(5001, function () {
-    console.log('Listening at port 5001...');
+// Error handler
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ error: 'An internal error occurred:', err });
 });
 
-module.exports = app;
+// Start server
+const PORT = process.env.PORT;
+app.listen(PORT, () => {
+    console.log(`Listening on port ${PORT}...`);
+});
