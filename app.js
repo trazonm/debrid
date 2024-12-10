@@ -116,21 +116,26 @@ app.use(async (req, res, next) => {
         console.log(location);
 
         // Log the geolocation data
-        const logEntry = {
-            ip: clientIp,
-            location: `${location.city}, ${location.region}, ${location.country} ${location.postal}`,
-            timestamp: new Date().toLocaleString('en-US', {
-                timeZone: 'America/New_York',
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: true
-            })
-        };
+        const formattedEntries = log.map(entry => {
+            const timestamp = new Date(entry.timestamp);
+            const readableTimestamp = timestamp.toLocaleString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric', 
+                hour: 'numeric', 
+                minute: 'numeric', 
+                second: 'numeric', 
+                hour12: true 
+            });
+        
+            return `
+                <tr>
+                    <td>${entry.ip}</td>
+                    <td>${entry.location}</td>
+                    <td>${readableTimestamp}</td>
+                </tr>`;
+        }).join('');
 
         // Read existing log or initialize
         const log = fs.existsSync(logFilePath)
