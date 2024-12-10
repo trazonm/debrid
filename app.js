@@ -112,7 +112,7 @@ app.use(async (req, res, next) => {
 
     try {
         const response = await axios.get(`https://ipinfo.io/${clientIp}?token=${process.env.IP_INFO_TOKEN}`);
-        const location = await response.json();
+        const location = await response.data;
         console.log(location);
 
         // Log the geolocation data
