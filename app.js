@@ -114,8 +114,9 @@ app.get('/unrestrict', asyncHandler(async (req, res) => {
     });
 
     const apiURL = `https://api.real-debrid.com/rest/1.0/unrestrict/link`;
-    const {response}  = await axios.post(apiURL, data, { headers: getRealDebridHeaders() });
+    const response  = await axios.post(apiURL, data, { headers: getRealDebridHeaders() });
     console.log(`Unrestricted link endpoint has returned data: ${JSON.stringify(response.data)}. The response status was ${response.status} ${response.statusText}`);
+    console.log(response);
     res.json(response.data);
 }));
 
