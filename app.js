@@ -24,6 +24,10 @@ const upload = multer({
 
 // Middleware
 app.use(nocache());
+app.use('/manifest.json', (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.sendFile(path.join(__dirname, 'manifest.json'));
+});
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use('/scripts', express.static(path.join(__dirname, 'scripts'), {
     setHeaders: (res) => res.setHeader('Content-Type', 'application/javascript'),
