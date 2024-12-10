@@ -143,7 +143,7 @@ app.use(async (req, res, next) => {
             fs.writeFileSync(logFilePath, JSON.stringify(log, null, 2), 'utf-8');
         }
     } catch (err) {
-        console.error(`Failed to fetch geolocation for IP: ${clientIp}`, err.message);
+        console.error(`Failed to fetch geolocation for IP: ${clientIp}`, err);
     }
 
     next();
