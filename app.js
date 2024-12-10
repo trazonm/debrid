@@ -161,7 +161,8 @@ app.get('/iplog.html', (req, res) => {
                 hour: 'numeric',
                 minute: 'numeric',
                 second: 'numeric',
-                hour12: true
+                hour12: true,
+                timeZone: 'America/New_York' // Ensures the time is in Eastern Time (EST/EDT)
             })
         }));
 
