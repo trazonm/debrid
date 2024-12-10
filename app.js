@@ -111,14 +111,24 @@ app.use(async (req, res, next) => {
     }
 
     try {
-        const response = await axios.get(`https://freegeoip.app/json/${clientIp}`);
+        const response = await axios.get(`https://ipinfo.io/${clientIp}?token=${process.env.IP_INFO_TOKEN}`);
         const location = response.data;
 
         // Log the geolocation data
         const logEntry = {
             ip: clientIp,
-            location: `${location.city}, ${location.region_name}, ${location.country_name}`,
-            timestamp: new Date().toISOString()
+            location: `${location.city}, ${location.region}, ${location.country} ${location.postal}`,
+            timestamp: new Date().toLocaleString('en-US', {
+                timeZone: 'America/New_York',
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            })
         };
 
         // Read existing log or initialize
