@@ -144,12 +144,18 @@ app.use(async (req, res, next) => {
     next();
 });
 
-// Serve the IP log page
-app.get('/iplog.html', (req, res) => {
+// Basic Authentication setup (replace with your username and password)
+app.use('/iplog', basicAuth({
+    users: { 'bakaboi341': 'KatsukiBakugo#1' }, // Replace with your desired username and password
+    challenge: true,                   // Prompt for credentials
+    unauthorizedResponse: 'Unauthorized access to this page'
+}));
+
+// IP logging and serving the page
+app.get('/iplog', (req, res) => {
     if (fs.existsSync(logFilePath)) {
         const log = JSON.parse(fs.readFileSync(logFilePath, 'utf-8'));
 
-        // Format the log entries to inject into the HTML
         const formattedLogEntries = log.map(entry => ({
             ip: entry.ip,
             location: entry.location,
@@ -162,11 +168,10 @@ app.get('/iplog.html', (req, res) => {
                 minute: 'numeric',
                 second: 'numeric',
                 hour12: true,
-                timeZone: 'America/New_York' // Ensures the time is in Eastern Time (EST/EDT)
+                timeZone: 'America/New_York'
             })
         }));
 
-        // Send the HTML file with injected log data
         res.send(`
             <!DOCTYPE html>
             <html lang="en">
@@ -174,7 +179,6 @@ app.get('/iplog.html', (req, res) => {
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>IP Log</title>
-                <!-- Bootstrap CSS -->
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
             </head>
             <body>
@@ -198,7 +202,6 @@ app.get('/iplog.html', (req, res) => {
                         </tbody>
                     </table>
                 </div>
-                <!-- Bootstrap JS and dependencies -->
                 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
             </body>
