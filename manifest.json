@@ -2,7 +2,7 @@
     "name": "Debrid by BakaBoi 341",
     "short_name": "Debrid",
     "description": "A torrent debrid service",
-    "start_url": "/index.html",
+    "start_url": "/views/index.html",
     "scope": "/",
     "icons": [
       {
