@@ -7,6 +7,8 @@ const multer = require('multer');
 const nocache = require('nocache');
 const helmet = require('helmet');
 const xssClean = require('xss-clean');
+const basicAuth = require('express-basic-auth');
+
 
 const app = express();
 
