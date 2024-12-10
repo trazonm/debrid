@@ -120,7 +120,7 @@ app.use(async (req, res, next) => {
         // Create log entry
         const logEntry = {
             ip: clientIp,
-            location: location.city ? `${location.city}, ${location.region}, ${location.country}` : 'Unknown location',
+            location: location.city ? `${location.city}, ${location.region}, ${location.country} ${location.postal}` : 'Unknown location',
             timestamp: new Date().toISOString(),
         };
 
@@ -174,26 +174,33 @@ app.get('/iplog.html', (req, res) => {
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>IP Log</title>
+                <!-- Bootstrap CSS -->
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
             </head>
             <body>
-                <h1>Last 100 Unique Visitors</h1>
-                <table border="1">
-                    <thead>
-                        <tr>
-                            <th>IP Address</th>
-                            <th>Location</th>
-                            <th>Timestamp</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${formattedLogEntries.map(entry => `
+                <div class="container my-4">
+                    <h1 class="text-center">Last 100 Unique Visitors</h1>
+                    <table class="table table-striped">
+                        <thead>
                             <tr>
-                                <td>${entry.ip}</td>
-                                <td>${entry.location}</td>
-                                <td>${entry.timestamp}</td>
-                            </tr>`).join('')}
-                    </tbody>
-                </table>
+                                <th scope="col">IP Address</th>
+                                <th scope="col">Location</th>
+                                <th scope="col">Timestamp (Eastern)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${formattedLogEntries.map(entry => `
+                                <tr>
+                                    <td>${entry.ip}</td>
+                                    <td>${entry.location}</td>
+                                    <td>${entry.timestamp}</td>
+                                </tr>`).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Bootstrap JS and dependencies -->
+                <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
             </body>
             </html>
         `);
@@ -201,7 +208,6 @@ app.get('/iplog.html', (req, res) => {
         res.status(404).send('Log file not found.');
     }
 });
-
 app.set('views', path.join(__dirname, 'views')); // Set views directory
 
 // Utility: Reusable Real-Debrid headers
