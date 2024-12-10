@@ -1,9 +1,9 @@
-
 {
     "name": "Debrid by BakaBoi 341",
-    "short_name": "Debrid 2.1",
-    "start_url": "index.html",
-    "scope": "./",
+    "short_name": "Debrid",
+    "description": "A torrent debrid service",
+    "start_url": "/index.html",
+    "scope": "/",
     "icons": [
       {
         "src": "/assets/favicon.jpg",
@@ -13,5 +13,6 @@
     ],
     "theme_color": "#ffd31d",
     "background_color": "black",
-    "display": "standalone"
+    "display": "standalone",
+    "orientation": "portrait"
   }

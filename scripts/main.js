@@ -4,7 +4,7 @@ import { sendSearchRequest } from './search.js';
 
 if ("serviceWorker" in navigator) {
   // register service worker
-  navigator.serviceWorker.register("../service-worker.js");
+  navigator.serviceWorker.register("/scripts/service-worker.js");
 }
 
 
