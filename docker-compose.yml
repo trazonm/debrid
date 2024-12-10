@@ -6,7 +6,7 @@ services:
     environment:
       - JACKETT_API_KEY=${JACKETT_API_KEY}
       - REAL_DEBRID_AUTH=${REAL_DEBRID_AUTH}
-      - PORT=${5001}
+      - PORT=${PORT}
     volumes:
       - .:/app
     stdin_open: true
