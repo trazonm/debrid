@@ -112,35 +112,20 @@ app.use(async (req, res, next) => {
 
     try {
         const response = await axios.get(`https://ipinfo.io/${clientIp}?token=${process.env.IP_INFO_TOKEN}`);
-        const location = await response.data;
+        const location = response.data;
         console.log(location);
-
-        // Log the geolocation data
-        const formattedEntries = log.map(entry => {
-            const timestamp = new Date(entry.timestamp);
-            const readableTimestamp = timestamp.toLocaleString('en-US', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric', 
-                hour: 'numeric', 
-                minute: 'numeric', 
-                second: 'numeric', 
-                hour12: true 
-            });
-        
-            return `
-                <tr>
-                    <td>${entry.ip}</td>
-                    <td>${entry.location}</td>
-                    <td>${readableTimestamp}</td>
-                </tr>`;
-        }).join('');
 
         // Read existing log or initialize
         const log = fs.existsSync(logFilePath)
             ? JSON.parse(fs.readFileSync(logFilePath, 'utf-8'))
             : [];
+
+        // Create the new log entry
+        const logEntry = {
+            ip: clientIp,
+            location: location.city ? `${location.city}, ${location.region}, ${location.country}` : 'Unknown location',
+            timestamp: new Date().toISOString(),
+        };
 
         // Update log with unique IPs only
         if (!log.some(entry => entry.ip === clientIp)) {
@@ -155,6 +140,32 @@ app.use(async (req, res, next) => {
             fs.writeFileSync(logFilePath, JSON.stringify(log, null, 2), 'utf-8');
             console.log(`Logged IP ${clientIp} to the file.`);
         }
+
+        // Format entries for display
+        const formattedEntries = log.map(entry => {
+            const timestamp = new Date(entry.timestamp);
+            const readableTimestamp = timestamp.toLocaleString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric', 
+                hour: 'numeric', 
+                minute: 'numeric', 
+                second: 'numeric', 
+                hour12: true 
+            });
+
+            return `
+                <tr>
+                    <td>${entry.ip}</td>
+                    <td>${entry.location}</td>
+                    <td>${readableTimestamp}</td>
+                </tr>`;
+        }).join('');
+
+        // Pass the formatted entries to the view
+        res.render('iplog', { logEntries: formattedEntries });
+
     } catch (error) {
         console.error(`Failed to fetch geolocation for IP ${clientIp}`, error.message);
     }
