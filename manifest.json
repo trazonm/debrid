@@ -1,0 +1,17 @@
+
+{
+    "name": "Debrid by BakaBoi 341",
+    "short_name": "Debrid 2.1",
+    "start_url": "index.html",
+    "scope": "./",
+    "icons": [
+      {
+        "src": "/assets/favicon.jpg",
+        "sizes": "192x192",
+        "type": "image/jpeg"
+      }
+    ],
+    "theme_color": "#ffd31d",
+    "background_color": "black",
+    "display": "standalone"
+  }

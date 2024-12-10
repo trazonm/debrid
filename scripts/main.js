@@ -1,6 +1,13 @@
 // main.js
 import { sendSearchRequest } from './search.js';
 
+
+if ("serviceWorker" in navigator) {
+  // register service worker
+  navigator.serviceWorker.register("../service-worker.js");
+}
+
+
 document.getElementById('search-button').addEventListener('click', sendSearchRequest);
 document.getElementById('searchInput').addEventListener('keypress', function (event) {
     if (event.key === 'Enter') {
