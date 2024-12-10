@@ -24,14 +24,26 @@ const upload = multer({
 
 // Middleware
 app.use(nocache());
-app.use('/manifest.json', (req, res) => {
-    res.setHeader('Content-Type', 'application/json');
-    res.sendFile(path.join(__dirname, 'manifest.json'));
+// app.use('/manifest.json', (req, res) => {
+//     res.setHeader('Content-Type', 'application/json');
+//     res.sendFile(path.join(__dirname, 'manifest.json'));
+// });
+// app.use('/service-worker.js', (req, res) => {
+//     res.setHeader('Content-Type', 'application/javascript');
+//     res.sendFile(path.join(__dirname, 'service-worker.js'));
+// });
+const excludedFiles = ['app.js', 'Dockerfile', 'docker-compose.yml'];
+
+app.use((req, res, next) => {
+    const requestedFile = path.basename(req.url);
+    if (excludedFiles.includes(requestedFile)) {
+        res.status(404).send('Not Found');
+    } else {
+        next();
+    }
 });
-app.use('/service-worker.js', (req, res) => {
-    res.setHeader('Content-Type', 'application/javascript');
-    res.sendFile(path.join(__dirname, 'service-worker.js'));
-});
+
+app.use(express.static(path.join(__dirname, './')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use('/scripts', express.static(path.join(__dirname, 'scripts'), {
     setHeaders: (res) => res.setHeader('Content-Type', 'application/javascript'),
