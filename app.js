@@ -53,7 +53,8 @@ const cspPolicy = {
         connectSrc: [
             "'self'", 
             "https://jackett-service.gleeze.com", // Allow connections to Jackett API
-            "https://ipapi.co"
+            "https://ipapi.co",
+            "https://freegeoip.app"
         ], // Allow external API requests to Jackett service
         upgradeInsecureRequests: [], // Automatically upgrade HTTP requests to HTTPS
     }
@@ -93,21 +94,16 @@ const isPrivateIp = (ip) => {
     return ip.startsWith('192.168.') || ip.startsWith('10.') || ip.startsWith('172.') || ip === '127.0.0.1' || ip === '::1';
 };
 
-//ip logging
+// IP logging middleware
 app.use(async (req, res, next) => {
     let clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-
-    // Extract IPv4 from IPv6-mapped IPv4 addresses
     if (clientIp.startsWith('::ffff:')) {
         clientIp = clientIp.split(':').pop();
     }
 
-    // Fallback for localhost
-    if (clientIp === '::1' || clientIp === '127.0.0.1') {
-        clientIp = 'Your Local Machine (localhost)';
+    if (clientIp === '127.0.0.1' || clientIp === '::1') {
+        clientIp = 'localhost';
     }
-
-    console.log(`Client IP: ${clientIp}`);
 
     if (isPrivateIp(clientIp)) {
         console.log('Private or localhost IP detected, skipping geolocation.');
@@ -115,12 +111,15 @@ app.use(async (req, res, next) => {
     }
 
     try {
-        const ipData = await axios.get(`https://ipapi.co/${clientIp}/json/`);
-        if (!ipData.data || !ipData.data.city) {
-            throw new Error('Incomplete geolocation data received.');
-        }
+        const response = await axios.get(`https://freegeoip.app/json/${clientIp}`);
+        const location = response.data;
 
-        const location = ipData.data;
+        // Log the geolocation data
+        const logEntry = {
+            ip: clientIp,
+            location: `${location.city}, ${location.region_name}, ${location.country_name}`,
+            timestamp: new Date().toISOString()
+        };
 
         // Read existing log or initialize
         const log = fs.existsSync(logFilePath)
@@ -129,21 +128,19 @@ app.use(async (req, res, next) => {
 
         // Update log with unique IPs only
         if (!log.some(entry => entry.ip === clientIp)) {
-            log.unshift({
-                ip: clientIp,
-                location: `${location.city}, ${location.region}, ${location.country_name}`,
-                timestamp: new Date().toISOString(),
-            });
+            log.unshift(logEntry);
 
-            // Keep only the last 100 entries
+            // Keep only the last MAX_LOG_ENTRIES entries
             if (log.length > MAX_LOG_ENTRIES) {
                 log.pop();
             }
 
+            // Write the updated log to the file
             fs.writeFileSync(logFilePath, JSON.stringify(log, null, 2), 'utf-8');
+            console.log(`Logged IP ${clientIp} to the file.`);
         }
-    } catch (err) {
-        console.error(`Failed to fetch geolocation for IP: ${clientIp}`, err);
+    } catch (error) {
+        console.error(`Failed to fetch geolocation for IP ${clientIp}`, error.message);
     }
 
     next();
