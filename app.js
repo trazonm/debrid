@@ -41,10 +41,9 @@ const cspPolicy = {
     directives: {
         defaultSrc: ["'self'"], // Only allow resources from the same origin
         scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdn.jsdelivr.net"], // Allow inline scripts and external CDN
-        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"], // Allow inline styles and Google Fonts
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net", "https://fonts.cdnfonts.com"], // Allow inline styles and Google Fonts
         fontSrc: ["'self'", "https://fonts.gstatic.com"], // Allow fonts from Google Fonts
-        imgSrc: ["'self'", "data:", "https://example.com"], // Allow images from self, data URIs, and trusted sources
-        connectSrc: ["'self'", "https://api.example.com"], // Allow AJAX requests only from self and trusted API
+        imgSrc: ["'self'", "data:"], // Allow images from self, data URIs, and trusted sources
         objectSrc: ["'none'"], // Block the use of <object> tags
         upgradeInsecureRequests: [], // Automatically upgrade HTTP requests to HTTPS
     }
