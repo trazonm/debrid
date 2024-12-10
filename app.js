@@ -7,8 +7,7 @@ const multer = require('multer');
 const nocache = require('nocache');
 const helmet = require('helmet');
 const xssClean = require('xss-clean');
-
-
+const ejs = require('ejs');
 
 const app = express();
 
@@ -53,7 +52,8 @@ const cspPolicy = {
         objectSrc: ["'none'"], // Block the use of <object> tags
         connectSrc: [
             "'self'", 
-            "https://jackett-service.gleeze.com" // Allow connections to Jackett API
+            "https://jackett-service.gleeze.com", // Allow connections to Jackett API
+            "https://ipapi.co"
         ], // Allow external API requests to Jackett service
         upgradeInsecureRequests: [], // Automatically upgrade HTTP requests to HTTPS
     }
@@ -84,9 +84,95 @@ app.use('/scripts', express.static(path.join(__dirname, 'scripts'), {
 // Utility: Async wrapper to handle errors
 const asyncHandler = (fn) => (req, res, next) => fn(req, res, next).catch(next);
 
+const fs = require('fs');
+const MAX_LOG_ENTRIES = 100;
+const logFilePath = path.join(__dirname, 'iplog.json');
+
+const isPrivateIp = (ip) => {
+    // Check for private IP ranges and localhost
+    return ip.startsWith('192.168.') || ip.startsWith('10.') || ip.startsWith('172.') || ip === '127.0.0.1' || ip === '::1';
+};
+
+//ip logging
+app.use(async (req, res, next) => {
+    let clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+
+    // Extract IPv4 from IPv6-mapped IPv4 addresses
+    if (clientIp.startsWith('::ffff:')) {
+        clientIp = clientIp.split(':').pop();
+    }
+
+    // Fallback for localhost
+    if (clientIp === '::1' || clientIp === '127.0.0.1') {
+        clientIp = 'Your Local Machine (localhost)';
+    }
+
+    console.log(`Client IP: ${clientIp}`);
+
+    if (isPrivateIp(clientIp)) {
+        console.log('Private or localhost IP detected, skipping geolocation.');
+        return next();
+    }
+
+    try {
+        const ipData = await axios.get(`https://ipapi.co/${clientIp}/json/`);
+        if (!ipData.data || !ipData.data.city) {
+            throw new Error('Incomplete geolocation data received.');
+        }
+
+        const location = ipData.data;
+
+        // Read existing log or initialize
+        const log = fs.existsSync(logFilePath)
+            ? JSON.parse(fs.readFileSync(logFilePath, 'utf-8'))
+            : [];
+
+        // Update log with unique IPs only
+        if (!log.some(entry => entry.ip === clientIp)) {
+            log.unshift({
+                ip: clientIp,
+                location: `${location.city}, ${location.region}, ${location.country_name}`,
+                timestamp: new Date().toISOString(),
+            });
+
+            // Keep only the last 100 entries
+            if (log.length > MAX_LOG_ENTRIES) {
+                log.pop();
+            }
+
+            fs.writeFileSync(logFilePath, JSON.stringify(log, null, 2), 'utf-8');
+        }
+    } catch (err) {
+        console.error(`Failed to fetch geolocation for IP: ${clientIp}`, err.message);
+    }
+
+    next();
+});
+
 // Utility: Reusable Real-Debrid headers
 const getRealDebridHeaders = () => ({
     Authorization: process.env.REAL_DEBRID_AUTH,
+});
+
+
+app.set('views', path.join(__dirname, 'views')); // Set views directory
+app.set('view engine', 'ejs'); // Use EJS as the template engine
+
+app.get('/iplog.html', (req, res) => {
+    if (fs.existsSync(logFilePath)) {
+        const log = JSON.parse(fs.readFileSync(logFilePath, 'utf-8'));
+        const formattedEntries = log.map(entry => `
+            <tr>
+                <td>${entry.ip}</td>
+                <td>${entry.location}</td>
+                <td>${entry.timestamp}</td>
+            </tr>`).join('');
+
+        // Render the EJS template
+        res.render('iplog', { logEntries: formattedEntries });
+    } else {
+        res.status(404).send('Log file not found.');
+    }
 });
 
 // Serve the index page
@@ -166,10 +252,10 @@ app.get('/unrestrict', asyncHandler(async (req, res) => {
     });
 
     const apiURL = `https://api.real-debrid.com/rest/1.0/unrestrict/link`;
-    const response  = await axios.post(apiURL, data, { headers: getRealDebridHeaders() });
+    const { data: response }  = await axios.post(apiURL, data, { headers: getRealDebridHeaders() });
     console.log(`Unrestricted link endpoint has returned data: ${JSON.stringify(response.data)}. The response status was ${response.status} ${response.statusText}`);
     console.log(response);
-    res.json(response.data);
+    res.json(response);
 }));
 
 // Check redirect
@@ -204,7 +290,7 @@ async function selectFiles(torrentId, headers) {
 // Error handler
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).json({ error: 'An internal error occurred:', err });
+    res.status(500).json({ error: 'An internal error occurred', details: err.message });
 });
 
 // Start server

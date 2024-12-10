@@ -28,7 +28,7 @@ export function generateLink(link, downloadCell) {
                 const data = await response.json();
                 id = data.id;
                 if (id === undefined) {
-                    alert('Error: Invalid Torrent.  No seeders or corrupted.')
+                    alert("Error: Invalid torrent. The file may have no seeders or could be corrupted. If you’re attempting multiple downloads simultaneously, please slow down, barnacle.")
                 }
             } else {
                 const response = await fetch(`/checkRedirect?link=${encodeURIComponent(link)}`);
@@ -40,7 +40,7 @@ export function generateLink(link, downloadCell) {
                     const data = await response.json();
                     id = data.id;
                     if (id === undefined) {
-                        alert('Error: Invalid Torrent.  No seeders or corrupted.')
+                        alert("Error: Invalid torrent. The file may have no seeders or could be corrupted. If you’re attempting multiple downloads simultaneously, please slow down, barnacle.")
                     }
                 } else {
                     const file = await fetch(redirectUrl);
@@ -61,7 +61,7 @@ export function generateLink(link, downloadCell) {
                     const data = await response.json();
                     id = data.id || data.torrentId;
                     if (id === undefined) {
-                        alert('Error: Invalid Torrent.  No seeders or corrupted.')
+                        alert("Error: Invalid torrent. The file may have no seeders or could be corrupted. If you’re attempting multiple downloads simultaneously, please slow down, barnacle.")
                     }
                 }
             }
