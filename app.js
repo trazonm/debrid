@@ -45,12 +45,16 @@ const cspPolicy = {
             "'self'", 
             "'unsafe-inline'", 
             "https://fonts.googleapis.com", 
-            "https://cdn.jsdelivr.net", // Add jsdelivr for bootstrap CSS
-            "https://fonts.cdnfonts.com" // Add CDN for the anime-ace font
-        ], // Allow inline styles and external styles from fonts and CDN
+            "https://cdn.jsdelivr.net", 
+            "https://fonts.cdnfonts.com"
+        ], // Allow inline styles and external styles
         fontSrc: ["'self'", "https://fonts.gstatic.com", "https://fonts.cdnfonts.com"], // Allow fonts from Google Fonts and CDN fonts
         imgSrc: ["'self'", "data:"], // Allow images from self, data URIs, and trusted sources
         objectSrc: ["'none'"], // Block the use of <object> tags
+        connectSrc: [
+            "'self'", 
+            "https://jackett-service.gleeze.com" // Allow connections to Jackett API
+        ], // Allow external API requests to Jackett service
         upgradeInsecureRequests: [], // Automatically upgrade HTTP requests to HTTPS
     }
 };
