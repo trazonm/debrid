@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Log</title>
+</head>
+<body>
+    <h1>Last 100 Unique Visitors</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>IP Address</th>
+                <th>Location</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody id="log-entries">
+            <!-- Dynamic log entries will be injected here -->
+        </tbody>
+    </table>
+    <script>
+        // Inject log entries dynamically here
+        const logEntries = <%= logEntries %>;
+
+        const logTable = document.getElementById('log-entries');
+        logEntries.forEach(entry => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${entry.ip}</td>
+                <td>${entry.location}</td>
+                <td>${entry.timestamp}</td>
+            `;
+            logTable.appendChild(row);
+        });
+    </script>
+</body>
+</html>

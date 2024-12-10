@@ -7,7 +7,6 @@ const multer = require('multer');
 const nocache = require('nocache');
 const helmet = require('helmet');
 const xssClean = require('xss-clean');
-const ejs = require('ejs');
 
 const app = express();
 
@@ -94,7 +93,6 @@ const isPrivateIp = (ip) => {
     return ip.startsWith('192.168.') || ip.startsWith('10.') || ip.startsWith('172.') || ip === '127.0.0.1' || ip === '::1';
 };
 
-// IP logging middleware
 app.use(async (req, res, next) => {
     let clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     if (clientIp.startsWith('::ffff:')) {
@@ -113,14 +111,13 @@ app.use(async (req, res, next) => {
     try {
         const response = await axios.get(`https://ipinfo.io/${clientIp}?token=${process.env.IP_INFO_TOKEN}`);
         const location = response.data;
-        console.log(location);
 
         // Read existing log or initialize
         const log = fs.existsSync(logFilePath)
             ? JSON.parse(fs.readFileSync(logFilePath, 'utf-8'))
             : [];
 
-        // Create the new log entry
+        // Create log entry
         const logEntry = {
             ip: clientIp,
             location: location.city ? `${location.city}, ${location.region}, ${location.country}` : 'Unknown location',
@@ -140,32 +137,6 @@ app.use(async (req, res, next) => {
             fs.writeFileSync(logFilePath, JSON.stringify(log, null, 2), 'utf-8');
             console.log(`Logged IP ${clientIp} to the file.`);
         }
-
-        // Format entries for display
-        const formattedEntries = log.map(entry => {
-            const timestamp = new Date(entry.timestamp);
-            const readableTimestamp = timestamp.toLocaleString('en-US', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric', 
-                hour: 'numeric', 
-                minute: 'numeric', 
-                second: 'numeric', 
-                hour12: true 
-            });
-
-            return `
-                <tr>
-                    <td>${entry.ip}</td>
-                    <td>${entry.location}</td>
-                    <td>${readableTimestamp}</td>
-                </tr>`;
-        }).join('');
-
-        // Pass the formatted entries to the view
-        res.render('iplog', { logEntries: formattedEntries });
-
     } catch (error) {
         console.error(`Failed to fetch geolocation for IP ${clientIp}`, error.message);
     }
@@ -173,30 +144,68 @@ app.use(async (req, res, next) => {
     next();
 });
 
-// Utility: Reusable Real-Debrid headers
-const getRealDebridHeaders = () => ({
-    Authorization: process.env.REAL_DEBRID_AUTH,
-});
-
-
-app.set('views', path.join(__dirname, 'views')); // Set views directory
-app.set('view engine', 'ejs'); // Use EJS as the template engine
-
+// Serve the IP log page
 app.get('/iplog.html', (req, res) => {
     if (fs.existsSync(logFilePath)) {
         const log = JSON.parse(fs.readFileSync(logFilePath, 'utf-8'));
-        const formattedEntries = log.map(entry => `
-            <tr>
-                <td>${entry.ip}</td>
-                <td>${entry.location}</td>
-                <td>${entry.timestamp}</td>
-            </tr>`).join('');
 
-        // Render the EJS template
-        res.render('iplog', { logEntries: formattedEntries });
+        // Format the log entries to inject into the HTML
+        const formattedLogEntries = log.map(entry => ({
+            ip: entry.ip,
+            location: entry.location,
+            timestamp: new Date(entry.timestamp).toLocaleString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                second: 'numeric',
+                hour12: true
+            })
+        }));
+
+        // Send the HTML file with injected log data
+        res.send(`
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>IP Log</title>
+            </head>
+            <body>
+                <h1>Last 100 Unique Visitors</h1>
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <th>IP Address</th>
+                            <th>Location</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${formattedLogEntries.map(entry => `
+                            <tr>
+                                <td>${entry.ip}</td>
+                                <td>${entry.location}</td>
+                                <td>${entry.timestamp}</td>
+                            </tr>`).join('')}
+                    </tbody>
+                </table>
+            </body>
+            </html>
+        `);
     } else {
         res.status(404).send('Log file not found.');
     }
+});
+
+app.set('views', path.join(__dirname, 'views')); // Set views directory
+
+// Utility: Reusable Real-Debrid headers
+const getRealDebridHeaders = () => ({
+    Authorization: process.env.REAL_DEBRID_AUTH,
 });
 
 // Serve the index page
