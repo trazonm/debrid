@@ -149,6 +149,34 @@ app.use(async (req, res, next) => {
     next();
 });
 
+app.use(async (req, res, next) => {
+    let clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    if (clientIp.startsWith('::ffff:')) {
+        clientIp = clientIp.split(':').pop();
+    }
+
+    if (clientIp === '127.0.0.1' || clientIp === '::1') {
+        // Allow localhost for development purposes
+        return next();
+    }
+
+    try {
+        const response = await axios.get(`https://ipinfo.io/${clientIp}?token=${process.env.IP_INFO_TOKEN}`);
+        const location = response.data;        
+        const country = location.country;
+
+        if (country !== 'US') {
+            console.log(`Access denied for IP: ${clientIp} (${country})`);
+            return res.status(403).send('Access denied. This service is available to U.S. users only.');
+        }
+
+        next();
+    } catch (error) {
+        console.error(`Geolocation error for IP ${clientIp}:`, error.message);
+        res.status(500).send('Internal Server Error: Unable to verify IP location.');
+    }
+});
+
 // Basic Authentication setup (replace with your username and password)
 app.use('/iplog', basicAuth({
     users: {
