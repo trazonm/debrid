@@ -10,6 +10,9 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
+# Copy the sw-precache-config.js file
+COPY sw-precache-config.js ./sw-precache-config.js
+
 # Build the service worker
 RUN npm run build:sw
 
