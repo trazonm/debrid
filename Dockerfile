@@ -4,20 +4,18 @@ FROM node:18
 # Set the working directory
 WORKDIR /app
 
-# Copy the package.json and package-lock.json
+# Copy package files and install dependencies
 COPY package*.json ./
-
-# Install dependencies
 RUN npm install
 
-# Copy the sw-precache-config.js file
-COPY sw-precache-config.js ./sw-precache-config.js
-
-# Copy the rest of the application files
+# Copy the rest of the application files, including sw-precache-config.js
 COPY . .
 
-# Build the service worker
+# Generate the service worker
 RUN npm run build:sw
+
+# Verify that sw.js exists
+RUN ls -la /app
 
 # Expose the port your app runs on
 EXPOSE 5001
