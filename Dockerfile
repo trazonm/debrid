@@ -8,14 +8,14 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Copy the rest of the application files, including sw-precache-config.js
+# Copy all application files
 COPY . .
+
+# Generate the CSS
+RUN npm run build:css
 
 # Generate the service worker
 RUN npm run build:sw
-
-# Verify that sw.js exists
-RUN ls -la /app
 
 # Expose the port your app runs on
 EXPOSE 5001
