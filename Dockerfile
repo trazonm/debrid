@@ -10,6 +10,9 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
+# Build the service worker
+RUN npm run build:sw
+
 # Copy the rest of the application files
 COPY . .
 

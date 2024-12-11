@@ -2,7 +2,7 @@ services:
   debrid:
     build: .
     ports:
-      - "5001:5001" # Map container port 5000 to host port 5000
+      - "5001:5001" # Map container port 5001 to host port 5001
     environment:
       - JACKETT_API_KEY=${JACKETT_API_KEY}
       - REAL_DEBRID_AUTH=${REAL_DEBRID_AUTH}

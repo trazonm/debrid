@@ -1,16 +1,23 @@
 // api.js
-import { setupPagination } from './pagination.js';
-import { getCurrentPage } from './config.js'; // Import getter functions
-import { showPage } from './ui.js';
+import {
+    setupPagination
+} from './pagination.js';
+import {
+    getCurrentPage
+} from './config.js'; // Import getter functions
+import {
+    showPage
+} from './ui.js';
 
 export function sendSearchRequest() {
     const query = document.getElementById('searchInput').value;
     const url = `/search?query=${encodeURIComponent(query)}`;
 
     // Show loading spinner
-    const loadingSpinner = document.getElementById('loadingSpinner');
-    // loadingSpinner.style.display = 'inline-block';
-    document.getElementById('loadingSpinner').style.visibility = 'visible';
+    if (query !== '') {
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        document.getElementById('loadingSpinner').style.visibility = 'visible';
+    }
 
     fetch(url)
         .then(response => response.json())
@@ -27,8 +34,10 @@ export function sendSearchRequest() {
             resultsModal.show();
         })
         .catch(error => {
-            console.error('Error:', error);
             document.getElementById('loadingSpinner').style.visibility = 'hidden';
-            alert('An error occurred. Please try again. Wagga');
+            console.error('Error:', error);
+            // Display the error toast
+            const errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
+            errorToast.show();
         });
 }
