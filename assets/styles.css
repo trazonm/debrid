@@ -97,3 +97,36 @@ td {
   max-width: 80px; /* Adjust width based on the longest text */
   white-space: nowrap; /* Prevent text wrapping */
 }
+
+/* Ip Logging */
+
+.log-entry td {
+  color: white !important;
+  text-align: center !important;
+  font-size: 1rem; /* Default size for larger screens */
+}
+
+/* Adjust font size for smaller screens */
+@media (max-width: 768px) {
+  .log-entry td {
+    font-size: 0.9rem; /* Slightly smaller font for tablets */
+  }
+}
+
+@media (max-width: 480px) {
+  .log-entry td {
+    font-size: 0.8rem; /* Smaller font for mobile phones */
+  }
+}
+
+#table-header {
+  color: white !important;
+  text-align: center !important;
+}
+
+#ipLogHeader {
+  padding: 40px;
+  font-family: 'Anime Ace', sans-serif;                                
+  color: white !important;
+  text-align: center !important;
+}
