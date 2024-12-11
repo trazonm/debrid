@@ -234,7 +234,7 @@ app.get('/', (req, res) => {
 
 // Search endpoint
 app.get('/search', asyncHandler(async (req, res) => {
-    const query = req.query.query ? .trim();
+    const query = req.query.query?.trim();
     console.log("Received search query: ", query);
     if (!query) {
         return res.status(400).json({
@@ -252,7 +252,7 @@ app.get('/search', asyncHandler(async (req, res) => {
 
 // Add magnet link
 app.get('/addMagnet', asyncHandler(async (req, res) => {
-    const link = req.query.link ? .trim();
+    const link = req.query.link?.trim();
     console.log("Received request to add magnet: ", link);
 
     if (!link || !link.startsWith('magnet:')) {
@@ -318,7 +318,7 @@ app.get('/checkProgress/:id', asyncHandler(async (req, res) => {
 
 // Unrestrict a link
 app.get('/unrestrict', asyncHandler(async (req, res) => {
-    const link = req.query.link ? .trim();
+    const link = req.query.link?.trim();
     if (!link) {
         return res.status(400).json({
             error: 'Link parameter is required'
@@ -342,7 +342,7 @@ app.get('/unrestrict', asyncHandler(async (req, res) => {
 
 // Check redirect
 app.get('/checkRedirect', asyncHandler(async (req, res) => {
-    const link = req.query.link ? .trim();
+    const link = req.query.link?.trim();
     console.log("Received request to check redirects for: ", link);
     if (!link) {
         return res.status(400).json({
@@ -361,7 +361,7 @@ app.get('/checkRedirect', asyncHandler(async (req, res) => {
             finalUrl: null
         });
     } catch (error) {
-        if (error.response ? .status === 302) {
+        if (error.response?.status === 302) {
             console.log("Redirect found");
             const redirectLocation = error.response.headers.location;
             res.json({
