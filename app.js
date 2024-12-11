@@ -15,7 +15,9 @@ const app = express();
 // Configure multer for file uploads
 const upload = multer({
     storage: multer.memoryStorage(),
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+    limits: {
+        fileSize: 5 * 1024 * 1024
+    }, // 5MB limit
     fileFilter: (req, file, cb) => {
         const allowedTypes = ['application/x-bittorrent'];
         if (allowedTypes.includes(file.mimetype)) {
@@ -42,17 +44,17 @@ const cspPolicy = {
         defaultSrc: ["'self'"], // Only allow resources from the same origin
         scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdn.jsdelivr.net"], // Allow inline scripts and external CDN
         styleSrc: [
-            "'self'", 
-            "'unsafe-inline'", 
-            "https://fonts.googleapis.com", 
-            "https://cdn.jsdelivr.net", 
+            "'self'",
+            "'unsafe-inline'",
+            "https://fonts.googleapis.com",
+            "https://cdn.jsdelivr.net",
             "https://fonts.cdnfonts.com"
         ], // Allow inline styles and external styles
         fontSrc: ["'self'", "https://fonts.gstatic.com", "https://fonts.cdnfonts.com"], // Allow fonts from Google Fonts and CDN fonts
         imgSrc: ["'self'", "data:"], // Allow images from self, data URIs, and trusted sources
         objectSrc: ["'none'"], // Block the use of <object> tags
         connectSrc: [
-            "'self'", 
+            "'self'",
             "https://jackett-service.gleeze.com", // Allow connections to Jackett API
             "https://ipapi.co",
             "https://freegeoip.app"
@@ -79,6 +81,7 @@ app.use((req, res, next) => {
 
 app.use(express.static(path.join(__dirname, './')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
+app.use('/sw.js', express.static(path.join(__dirname, 'sw.js')));
 app.use('/scripts', express.static(path.join(__dirname, 'scripts'), {
     setHeaders: (res) => res.setHeader('Content-Type', 'application/javascript'),
 }));
@@ -115,9 +118,9 @@ app.use(async (req, res, next) => {
         const location = response.data;
 
         // Read existing log or initialize
-        const log = fs.existsSync(logFilePath)
-            ? JSON.parse(fs.readFileSync(logFilePath, 'utf-8'))
-            : [];
+        const log = fs.existsSync(logFilePath) ?
+            JSON.parse(fs.readFileSync(logFilePath, 'utf-8')) :
+            [];
 
         // Create log entry
         const logEntry = {
@@ -148,8 +151,10 @@ app.use(async (req, res, next) => {
 
 // Basic Authentication setup (replace with your username and password)
 app.use('/iplog', basicAuth({
-    users: { 'bakaboi341': 'KatsukiBakugo#1' }, // Replace with your desired username and password
-    challenge: true,                   // Prompt for credentials
+    users: {
+        'bakaboi341': 'KatsukiBakugo#1'
+    }, // Replace with your desired username and password
+    challenge: true, // Prompt for credentials
     unauthorizedResponse: 'Unauthorized access to this page'
 }));
 
@@ -222,36 +227,50 @@ const getRealDebridHeaders = () => ({
 
 // Serve the index page
 app.get('/', (req, res) => {
-    res.sendFile('index.html', { root: path.join(__dirname, './views') });
+    res.sendFile('index.html', {
+        root: path.join(__dirname, './views')
+    });
 });
 
 // Search endpoint
 app.get('/search', asyncHandler(async (req, res) => {
-    const query = req.query.query?.trim();
+    const query = req.query.query ? .trim();
     console.log("Received search query: ", query);
     if (!query) {
-        return res.status(400).json({ error: 'Query parameter is required' });
+        return res.status(400).json({
+            error: 'Query parameter is required'
+        });
     }
 
     const apiURL = `https://jackett-service.gleeze.com/api/v2.0/indexers/all/results?apikey=${process.env.JACKETT_API_KEY}&Query=${encodeURIComponent(query)}`;
 
-    const { data } = await axios.get(apiURL);
+    const {
+        data
+    } = await axios.get(apiURL);
     res.json(data);
 }));
 
 // Add magnet link
 app.get('/addMagnet', asyncHandler(async (req, res) => {
-    const link = req.query.link?.trim();
+    const link = req.query.link ? .trim();
     console.log("Received request to add magnet: ", link);
 
     if (!link || !link.startsWith('magnet:')) {
-        return res.status(400).json({ error: 'Invalid magnet link provided' });
+        return res.status(400).json({
+            error: 'Invalid magnet link provided'
+        });
     }
 
-    const data = qs.stringify({ magnet: link });
+    const data = qs.stringify({
+        magnet: link
+    });
     const headers = getRealDebridHeaders();
 
-    const { data: response } = await axios.post('https://api.real-debrid.com/rest/1.0/torrents/addMagnet', data, { headers });
+    const {
+        data: response
+    } = await axios.post('https://api.real-debrid.com/rest/1.0/torrents/addMagnet', data, {
+        headers
+    });
     console.log(response);
     await selectFiles(response.id, headers);
     res.json(response);
@@ -261,7 +280,9 @@ app.get('/addMagnet', asyncHandler(async (req, res) => {
 app.put('/addTorrent', upload.single('file'), asyncHandler(async (req, res) => {
 
     if (!req.file) {
-        return res.status(400).json({ error: 'No torrent file provided' });
+        return res.status(400).json({
+            error: 'No torrent file provided'
+        });
     }
 
     console.log('Received request to add torrent file:', req.file);
@@ -271,25 +292,37 @@ app.put('/addTorrent', upload.single('file'), asyncHandler(async (req, res) => {
         'Content-Type': 'application/octet-stream',
     };
 
-    const { data } = await axios.put('https://api.real-debrid.com/rest/1.0/torrents/addTorrent', req.file.buffer, { headers });
+    const {
+        data
+    } = await axios.put('https://api.real-debrid.com/rest/1.0/torrents/addTorrent', req.file.buffer, {
+        headers
+    });
     await selectFiles(data.id, headers);
     res.json(data);
 }));
 
 // Check torrent progress
 app.get('/checkProgress/:id', asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const {
+        id
+    } = req.params;
     const apiURL = `https://api.real-debrid.com/rest/1.0/torrents/info/${id}`;
 
-    const { data } = await axios.get(apiURL, { headers: getRealDebridHeaders() });
+    const {
+        data
+    } = await axios.get(apiURL, {
+        headers: getRealDebridHeaders()
+    });
     res.json(data);
 }));
 
 // Unrestrict a link
 app.get('/unrestrict', asyncHandler(async (req, res) => {
-    const link = req.query.link?.trim();
+    const link = req.query.link ? .trim();
     if (!link) {
-        return res.status(400).json({ error: 'Link parameter is required' });
+        return res.status(400).json({
+            error: 'Link parameter is required'
+        });
     }
     console.log("Received request to unrestrict link: ", link);
     const data = qs.stringify({
@@ -297,7 +330,11 @@ app.get('/unrestrict', asyncHandler(async (req, res) => {
     });
 
     const apiURL = `https://api.real-debrid.com/rest/1.0/unrestrict/link`;
-    const { data: response }  = await axios.post(apiURL, data, { headers: getRealDebridHeaders() });
+    const {
+        data: response
+    } = await axios.post(apiURL, data, {
+        headers: getRealDebridHeaders()
+    });
     console.log(`Unrestricted link endpoint has returned data: ${JSON.stringify(response.data)}. The response status was ${response.status} ${response.statusText}`);
     console.log(response);
     res.json(response);
@@ -305,20 +342,32 @@ app.get('/unrestrict', asyncHandler(async (req, res) => {
 
 // Check redirect
 app.get('/checkRedirect', asyncHandler(async (req, res) => {
-    const link = req.query.link?.trim();
+    const link = req.query.link ? .trim();
     console.log("Received request to check redirects for: ", link);
     if (!link) {
-        return res.status(400).json({ error: 'Link parameter is required' });
+        return res.status(400).json({
+            error: 'Link parameter is required'
+        });
     }
 
     try {
-        const { headers } = await axios.get(link, { maxRedirects: 0 });
-        res.json({ redirects: 0, finalUrl: null });
+        const {
+            headers
+        } = await axios.get(link, {
+            maxRedirects: 0
+        });
+        res.json({
+            redirects: 0,
+            finalUrl: null
+        });
     } catch (error) {
-        if (error.response?.status === 302) {
+        if (error.response ? .status === 302) {
             console.log("Redirect found");
             const redirectLocation = error.response.headers.location;
-            res.json({ redirects: 1, finalUrl: redirectLocation });
+            res.json({
+                redirects: 1,
+                finalUrl: redirectLocation
+            });
         } else {
             throw error;
         }
@@ -328,14 +377,21 @@ app.get('/checkRedirect', asyncHandler(async (req, res) => {
 // Function: Select files
 async function selectFiles(torrentId, headers) {
     console.log("Received request to select files for torrent id:", torrentId);
-    const data = qs.stringify({ files: 'all' });
-    await axios.post(`https://api.real-debrid.com/rest/1.0/torrents/selectFiles/${torrentId}`, data, { headers });
+    const data = qs.stringify({
+        files: 'all'
+    });
+    await axios.post(`https://api.real-debrid.com/rest/1.0/torrents/selectFiles/${torrentId}`, data, {
+        headers
+    });
 }
 
 // Error handler
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).json({ error: 'An internal error occurred', details: err.message });
+    res.status(500).json({
+        error: 'An internal error occurred',
+        details: err.message
+    });
 });
 
 // Start server
