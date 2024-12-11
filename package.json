@@ -21,7 +21,7 @@
   "scripts": {
     "build:css": "postcss assets/styles.css -o assets/styles.autoprefixed.css",
     "watch:css": "postcss assets/styles.css -o assets/styles.autoprefixed.css --watch",
-    "build:sw": "sw-precache --config sw-precache-config.js",
+    "build:sw": "sw-precache --config ./sw-precache-config.js",
     "dev": "nodemon app.js",
     "start": "node app.js"
   },
