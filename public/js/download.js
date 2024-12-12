@@ -24,19 +24,19 @@ export function generateLink(link, downloadCell) {
         let id;
         try {
             if (link.includes('magnet')) {
-                const response = await fetch(`/addMagnet?link=${encodeURIComponent(link)}`);
+                const response = await fetch(`/torrents/addMagnet?link=${encodeURIComponent(link)}`);
                 const data = await response.json();
                 id = data.id;
                 if (id === undefined) {
                     alert("Error: Invalid torrent. The file may have no seeders or could be corrupted. If you’re attempting multiple downloads simultaneously, please slow down, barnacle.")
                 }
             } else {
-                const response = await fetch(`/checkRedirect?link=${encodeURIComponent(link)}`);
+                const response = await fetch(`/torrents/checkRedirect?link=${encodeURIComponent(link)}`);
                 const data = await response.json();
                 const redirectUrl = data.finalUrl || link; // Use finalUrl or handle accordingly
 
                 if (redirectUrl.includes('magnet')) {
-                    const response = await fetch(`/addMagnet?link=${encodeURIComponent(redirectUrl)}`);
+                    const response = await fetch(`/torrents/addMagnet?link=${encodeURIComponent(redirectUrl)}`);
                     const data = await response.json();
                     id = data.id;
                     if (id === undefined) {
@@ -54,7 +54,7 @@ export function generateLink(link, downloadCell) {
                     console.log('Downloading File:', filename);
                     formData.append('file', blob, filename);
 
-                    const response = await fetch('/addTorrent', {
+                    const response = await fetch('/torrents/addTorrent', {
                         method: 'PUT',
                         body: formData
                     });
@@ -82,7 +82,7 @@ export function checkProgress(id, progressText, downloadCell, loadingInterval) {
     progressText.innerText= `Progress: 0%`;
     if (id != undefined) {
         const interval = setInterval(() => {
-            fetch(`/checkProgress/${id}`)
+            fetch(`/torrents/checkProgress/${id}`)
                 .then(response => response.json())
                 .then(data => {
                     const progress = data.progress;
@@ -107,7 +107,7 @@ export function checkProgress(id, progressText, downloadCell, loadingInterval) {
 
 export function finalizeDownload(downloadLink, downloadCell) {
     if (downloadLink !== 'Invalid Torrent') {
-        fetch(`/unrestrict?link=${encodeURIComponent(downloadLink)}`)
+        fetch(`/torrents/unrestrict?link=${encodeURIComponent(downloadLink)}`)
             .then(response => response.json())
             .then(data => {
                 const finalDownloadLink = data.download;
