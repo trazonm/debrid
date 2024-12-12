@@ -22,6 +22,7 @@ const searchRoutes = require('./routes/search');
 
 // Global Middleware
 app.use(logIpGeolocation);
+app.use(restrictToUS);
 app.use(nocache());
 app.use(helmet({ frameguard: { action: 'deny' } }));
 
