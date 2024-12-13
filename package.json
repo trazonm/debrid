@@ -19,9 +19,9 @@
     "sw-precache": "^5.0.0"
   },
   "scripts": {
-    "build:css": "postcss public/assets/styles.css -o assets/styles.autoprefixed.css",
-    "watch:css": "postcss public/assets/styles.css -o assets/styles.autoprefixed.css --watch",
-    "build:sw": "sw-precache --config sw-precache-config.js --verbose",
+    "build:css": "postcss public/assets/styles.css -o public/assets/styles.autoprefixed.css",
+    "watch:css": "postcss public/assets/styles.css -o public/assets/styles.autoprefixed.css --watch",
+    "build:sw": "sw-precache --config config/sw-precache-config.js --verbose",
     "dev": "nodemon app.js",
     "start": "node app.js"
   },

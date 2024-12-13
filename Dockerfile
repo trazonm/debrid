@@ -17,9 +17,6 @@ RUN npm run build:css
 # Generate the service worker
 RUN npm run build:sw
 
-# Ensure the service worker is available in the root directory
-# RUN cp sw.js /app/
-
 # Expose the port your app runs on
 EXPOSE 5001
 
