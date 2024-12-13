@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
-const logFilePath = path.join(__dirname, '../iplog.json');
+const logFilePath = path.join(__dirname, '../logs/iplog.json');
 const MAX_LOG_ENTRIES = 100;
 
 // Function to determine if an IP is private
