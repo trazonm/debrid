@@ -1,10 +1,9 @@
 module.exports = {
     staticFileGlobs: [
-      'assets/**',       // Cache all files in /assets
+      'public/**',       // Cache all files in /public
       'scripts/**',      // Cache all files in /scripts
       'views/**',        // Cache all HTML pages
       'manifest.json',   // Cache the manifest file
-      'favicon.jpg'      // Cache the favicon
     ],
     stripPrefix: '',
     runtimeCaching: [

@@ -2,6 +2,7 @@ const express = require('express');
 const upload = require('../config/multerConfig');
 const asyncHandler = require('../utils/asyncHandler');
 const { getRealDebridHeaders } = require('../utils/realDebrid');
+// const { findUserByUsername, updateUserDownloads } = require('../models/user');
 const axios = require('axios');
 const qs = require('querystring');
 
@@ -9,24 +10,19 @@ const router = express.Router();
 
 router.put('/addTorrent', upload.single('file'), asyncHandler(async (req, res) => {
     if (!req.file) {
-        return res.status(400).json({
-            error: 'No torrent file provided'
-        });
+        return res.status(400).json({ error: 'No torrent file provided' });
     }
 
     console.log('Received request to add torrent file:', req.file);
 
-    const headers = {
-        ...getRealDebridHeaders(),
-        'Content-Type': 'application/octet-stream',
-    };
-
-    const {
-        data
-    } = await axios.put('https://api.real-debrid.com/rest/1.0/torrents/addTorrent', req.file.buffer, {
-        headers
-    });
+    const headers = { ...getRealDebridHeaders(), 'Content-Type': 'application/octet-stream' };
+    const { data } = await axios.put('https://api.real-debrid.com/rest/1.0/torrents/addTorrent', req.file.buffer, { headers });
     await selectFiles(data.id, headers);
+
+    // const user = await findUserByUsername(req.auth.user);
+    // user.downloads.push(data);
+    // await updateUserDownloads(user.username, user.downloads);
+
     res.json(data);
 }));
 

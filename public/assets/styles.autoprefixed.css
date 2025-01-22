@@ -7,16 +7,65 @@ body {
   color: red;
 }
 
+
+#offcanvasNavbar {
+  background: rgba(0, 0, 0, 0.477);
+}
+
+.navbar-nav {
+  font-family: 'Long distance call', sans-serif;
+  font-size: 5em;
+}
+
+.auth-form-title{
+  font-family: Bahnschrift, 'DIN Alternate', 'Franklin Gothic Medium', 'Nimbus Sans Narrow', sans-serif-condensed, sans-serif !important;
+  font-weight: normal;
+}
+
+.grecaptcha-badge { 
+  visibility: hidden !important;
+}
+
+#killua {
+  max-width: 200px;
+  max-height: 200px;
+  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
+  animation: colorCycle 3s infinite ease-in-out; /* Adding animation */
+}
+
+/* @keyframes colorCycle {
+  0% {
+    filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
+  }
+  50% {
+    filter: invert(14%) sepia(100%) saturate(7490%) hue-rotate(360deg) brightness(88%) contrast(114%);
+  }
+  100% {
+    filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
+  }
+} */
+.active-background {
+  color: white !important;
+}
+
+.active-background.active {
+  background-color: rgb(69, 69, 69) !important;
+}
+
 .modal-body {
-  max-height: 60vh; /* Limit the height of the modal body */
-  overflow-y: auto; /* Allow vertical scrolling */
+  max-height: 60vh;
+  /* Limit the height of the modal body */
+  overflow-y: auto;
+  /* Allow vertical scrolling */
   height: 60vh;
 }
 
 .modal-dialog {
   width: 70%;
-  max-width: 99%; /* Ensure modal does not take full width */
-  margin: auto; /* Center modal */
+  max-width: 99%;
+  /* Ensure modal does not take full width */
+  margin: auto;
+  /* Center modal */
 }
 
 .modal-footer,
@@ -46,12 +95,12 @@ td {
   font-size: 8em;
 }
 
-#searchInput, input:-webkit-autofill
-{
-  font-family: 'Anime Ace', sans-serif;                                
+#searchInput,
+input:-webkit-autofill {
+  font-family: 'Anime Ace', sans-serif;
   color: rgb(230, 230, 230);
   font-size: clamp(10px, 1vw, 14px);
-  background-color:transparent !important;
+  background-color: transparent !important;
 
 }
 
@@ -62,7 +111,8 @@ td {
 
 @media (max-width: 576px) {
   #searchInput {
-      font-size: 10px; /* Set a fixed font size for small screens */
+    font-size: 10px;
+    /* Set a fixed font size for small screens */
   }
 }
 
@@ -98,8 +148,10 @@ td {
 
 .progress-text {
   display: inline-block;
-  max-width: 80px; /* Adjust width based on the longest text */
-  white-space: nowrap; /* Prevent text wrapping */
+  max-width: 80px;
+  /* Adjust width based on the longest text */
+  white-space: nowrap;
+  /* Prevent text wrapping */
 }
 
 /* Ip Logging */
@@ -107,19 +159,22 @@ td {
 .log-entry td {
   color: white !important;
   text-align: center !important;
-  font-size: 1rem; /* Default size for larger screens */
+  font-size: 1rem;
+  /* Default size for larger screens */
 }
 
 /* Adjust font size for smaller screens */
 @media (max-width: 768px) {
   .log-entry td {
-    font-size: 0.9rem; /* Slightly smaller font for tablets */
+    font-size: 0.9rem;
+    /* Slightly smaller font for tablets */
   }
 }
 
 @media (max-width: 480px) {
   .log-entry td {
-    font-size: 0.8rem; /* Smaller font for mobile phones */
+    font-size: 0.8rem;
+    /* Smaller font for mobile phones */
   }
 }
 
@@ -130,7 +185,113 @@ td {
 
 #ipLogHeader {
   padding: 40px;
-  font-family: 'Anime Ace', sans-serif;                                
+  font-family: 'Anime Ace', sans-serif;
   color: white !important;
   text-align: center !important;
+}
+
+/* Downloads Page */
+
+#downloadsTableBody {
+  text-align: center;
+}
+
+#downloads-header {
+  color: white !important;
+  text-align: center !important;
+}
+
+#downloadsBody,
+html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: ui-rounded, 'Hiragino Maru Gothic ProN', Quicksand, Comfortaa, Manjari, 'Arial Rounded MT', 'Arial Rounded MT Bold', Calibri, source-sans-pro, sans-serif;
+}
+
+.video-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  z-index: -1;
+}
+
+.downloads-container {
+  position: relative;
+  z-index: 1;
+  color: white;
+  text-align: center;
+}
+
+#downloadsTable {
+  color: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+#downloadsTable th,
+#downloadsTable td {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  /* Light border to separate cells */
+}
+
+#downloadsHeader {
+  font-family: 'Long distance call', sans-serif;
+  font-size: 8em;
+  margin-bottom: 20px;
+  color: #9400D3;
+  /* Deep purple color */
+  /* text-shadow: 0 0 5px #9400D3, 0 0 10px #9400D3, 0 0 20px #9400D3, 
+               0 0 40px #FF00FF, 0 0 80px #FF00FF, 0 0 90px #FF00FF, 
+               0 0 100px #FF00FF, 0 0 150px #FF00FF; */
+
+}
+
+.downloads-table td {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  /* Semi-transparent background */
+}
+
+.nav-link.active {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+#auth-link,
+#search-section,
+#navbar {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+#download-link {
+  color: #9400D3;
+  /* Deep purple color */
+  text-shadow: 0 0 5px #9400D3, 0 0 10px #9400D3, 0 0 20px #9400D3,
+    0 0 40px #FF00FF, 0 0 80px #FF00FF, 0 0 90px #FF00FF,
+    0 0 100px #FF00FF, 0 0 150px #FF00FF;
+  font-family: Bahnschrift, 'DIN Alternate', 'Franklin Gothic Medium', 'Nimbus Sans Narrow', sans-serif-condensed, sans-serif;
+  font-weight: normal;
+
+}
+
+.download-page-img {
+  filter: invert(99%) sepia(1%) saturate(20%) hue-rotate(78deg) brightness(105%) contrast(100%) !important;
+  max-width: 3vw;
+  max-height: 3vh;
+  min-width: 30px;
+  transition: filter 0.3s ease-in-out; /* Adding transition effect */
+  padding: 5px;
+  cursor: pointer;
+}
+
+.download-page-img:hover {
+  filter: invert(14%) sepia(94%) saturate(3817%) hue-rotate(279deg) brightness(93%) contrast(138%) !important;
 }

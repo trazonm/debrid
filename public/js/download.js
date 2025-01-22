@@ -9,89 +9,106 @@ export function generateLink(link, downloadCell) {
         progressText = document.createElement('span');
         progressText.className = 'progress-text';
         progressText.innerText = 'Please Wait';
-
         downloadCell.appendChild(progressText);
     }
 
-    // Start the loading ellipsis animation
-    let dotCount = 0; // Start with 0 dots
-    const loadingInterval = setInterval(() => {
-        dotCount = (dotCount + 1) % 4;  // Cycle through 0 to 3 dots (0, 1, 2, 3)
-        progressText.innerText = `Please Wait${'.'.repeat(dotCount)}`;
-    }, 500); // Update every 500ms
+    startLoadingAnimation(progressText);
 
     (async () => {
         let id;
         try {
-            if (link.includes('magnet')) {
-                const response = await fetch(`/torrents/addMagnet?link=${encodeURIComponent(link)}`);
-                const data = await response.json();
-                id = data.id;
-                if (id === undefined) {
-                    alert("Error: Invalid torrent. The file may have no seeders or could be corrupted. If you’re attempting multiple downloads simultaneously, please slow down, barnacle.")
-                }
-            } else {
-                const response = await fetch(`/torrents/checkRedirect?link=${encodeURIComponent(link)}`);
-                const data = await response.json();
-                const redirectUrl = data.finalUrl || link; // Use finalUrl or handle accordingly
-
-                if (redirectUrl.includes('magnet')) {
-                    const response = await fetch(`/torrents/addMagnet?link=${encodeURIComponent(redirectUrl)}`);
-                    const data = await response.json();
-                    id = data.id;
-                    if (id === undefined) {
-                        alert("Error: Invalid torrent. The file may have no seeders or could be corrupted. If you’re attempting multiple downloads simultaneously, please slow down, barnacle.")
-                    }
-                } else {
-                    const file = await fetch(redirectUrl);
-                    const blob = await file.blob();
-                    const formData = new FormData();
-                    const params = new Proxy(new URLSearchParams(link), {
-                        get: (searchParams, prop) => searchParams.get(prop),
-                    });
-
-                    const filename = params.file || 'torrent'
-                    console.log('Downloading File:', filename);
-                    formData.append('file', blob, filename);
-
-                    const response = await fetch('/torrents/addTorrent', {
-                        method: 'PUT',
-                        body: formData
-                    });
-                    const data = await response.json();
-                    id = data.id || data.torrentId;
-                    if (id === undefined) {
-                        alert("Error: Invalid torrent. The file may have no seeders or could be corrupted. If you’re attempting multiple downloads simultaneously, please slow down, barnacle.")
-                    }
-                }
-            }
+            id = await handleLink(link);
         } catch (error) {
             console.error('Error:', error);
             alert('An error occurred while generating the link.');
             if (downloadButton) downloadButton.style.display = 'block';
-            clearInterval(loadingInterval); // Stop the loading animation
+            stopLoadingAnimation();
             return;
         }
 
-        checkProgress(id, progressText, downloadCell, loadingInterval);
+        checkProgress(id, progressText, downloadCell);
     })();
 }
 
-export function checkProgress(id, progressText, downloadCell, loadingInterval) {
-    clearInterval(loadingInterval); // Stop loading animation immediately when checking progress
-    progressText.innerText= `Progress: 0%`;
+function startLoadingAnimation(progressText) {
+    let dotCount = 0;
+    const loadingInterval = setInterval(() => {
+        dotCount = (dotCount + 1) % 4;
+        progressText.innerText = `Please Wait${'.'.repeat(dotCount)}`;
+    }, 500);
+    progressText.loadingInterval = loadingInterval;
+}
+
+function stopLoadingAnimation(progressText) {
+    clearInterval(progressText.loadingInterval);
+}
+
+async function handleLink(link) {
+    if (link.includes('magnet')) {
+        return await addMagnet(link);
+    } else {
+        const redirectUrl = await getRedirectUrl(link);
+        if (redirectUrl.includes('magnet')) {
+            return await addMagnet(redirectUrl);
+        } else {
+            return await addTorrent(redirectUrl, link);
+        }
+    }
+}
+
+async function addMagnet(link) {
+    const response = await fetch(`/torrents/addMagnet?link=${encodeURIComponent(link)}`);
+    const data = await response.json();
+    if (data.id === undefined) {
+        alert("Error: Invalid torrent. The file may have no seeders or could be corrupted. If you’re attempting multiple downloads simultaneously, please slow down, barnacle.");
+    }
+    return data.id;
+}
+
+async function getRedirectUrl(link) {
+    const response = await fetch(`/torrents/checkRedirect?link=${encodeURIComponent(link)}`);
+    const data = await response.json();
+    return data.finalUrl || link;
+}
+
+async function addTorrent(redirectUrl, link) {
+    const file = await fetch(redirectUrl);
+    const blob = await file.blob();
+    const formData = new FormData();
+    const params = new Proxy(new URLSearchParams(link), {
+        get: (searchParams, prop) => searchParams.get(prop),
+    });
+
+    const filename = params.file || 'torrent';
+    formData.append('file', blob, filename);
+
+    const response = await fetch('/torrents/addTorrent', {
+        method: 'PUT',
+        body: formData
+    });
+    const data = await response.json();
+    if (data.id === undefined && data.torrentId === undefined) {
+        alert("Error: Invalid torrent. The file may have no seeders or could be corrupted. If you’re attempting multiple downloads simultaneously, please slow down, barnacle.");
+    }
+    return data.id || data.torrentId;
+}
+
+export function checkProgress(id, progressText, downloadCell) {
+    stopLoadingAnimation(progressText);
+    progressText.innerText = `Progress: 0%`;
     if (id != undefined) {
         const interval = setInterval(() => {
             fetch(`/torrents/checkProgress/${id}`)
                 .then(response => response.json())
                 .then(data => {
                     const progress = data.progress;
-
                     progressText.innerText = `Progress: ${progress}%`;
+
+                    updateDownloadProgress(id, data.filename, progress);
 
                     if (progress >= 100) {
                         clearInterval(interval);
-                        finalizeDownload(data.links[0], downloadCell);
+                        finalizeDownload(id, data.filename, data.links[0], downloadCell);
                     }
                 })
                 .catch(error => {
@@ -105,24 +122,53 @@ export function checkProgress(id, progressText, downloadCell, loadingInterval) {
     }
 }
 
-export function finalizeDownload(downloadLink, downloadCell) {
+function updateDownloadProgress(id, filename, progress) {
+    fetch('/account/updateDownload', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            id: id,
+            filename: filename,
+            progress: progress,
+            link: "In Progress"
+        })
+    });
+}
+
+export function finalizeDownload(id, filename, downloadLink, downloadCell) {
     if (downloadLink !== 'Invalid Torrent') {
         fetch(`/torrents/unrestrict?link=${encodeURIComponent(downloadLink)}`)
             .then(response => response.json())
             .then(data => {
                 const finalDownloadLink = data.download;
+                const progress = 100;
+                updateDownloadProgress(id, filename, progress, finalDownloadLink);
 
                 const downloadButton = document.createElement('button');
                 downloadButton.className = 'btn btn-success';
                 downloadButton.textContent = 'Download Link';
-                
-                // Navigate to the link in the same tab
                 downloadButton.onclick = () => {
                     window.location.href = finalDownloadLink;
                 };
-                
+
                 downloadCell.innerHTML = '';
                 downloadCell.appendChild(downloadButton);
+
+                // Update download progress after finalDownloadLink is set
+                fetch('/account/updateDownload', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                        filename: filename,
+                        progress: progress,
+                        link: finalDownloadLink
+                    })
+                });
             })
             .catch(error => {
                 console.error('Error generating download link:', error);

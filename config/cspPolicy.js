@@ -1,14 +1,19 @@
-// config/cspPolicy.js
-
 const cspPolicy = {
     directives: {
-        defaultSrc: ["'self'"],
+        defaultSrc: ["'self'", "data:"],
 
         scriptSrc: [
             "'self'",
             "'unsafe-inline'",
             "'unsafe-eval'",
-            "https://cdn.jsdelivr.net"
+            "https://cdn.jsdelivr.net",
+            "https://www.google.com/recaptcha/",
+            "https://*.google.com/recaptcha/",
+            "https://www.gstatic.com/recaptcha/",
+        ],
+
+        scriptSrcAttr: [
+            "'unsafe-inline'"
         ],
 
         styleSrc: [
@@ -16,7 +21,7 @@ const cspPolicy = {
             "'unsafe-inline'",
             "https://fonts.googleapis.com",
             "https://cdn.jsdelivr.net",
-            "https://fonts.cdnfonts.com"
+            "https://fonts.cdnfonts.com",
         ],
 
         fontSrc: [
@@ -32,14 +37,12 @@ const cspPolicy = {
 
         objectSrc: ["'none'"],
 
-        connectSrc: [
-            "'self'",
-            "https://jackett-service.gleeze.com",
-            "https://ipapi.co",
-            "https://freegeoip.app"
-        ],
+        connectSrc: ["'self'", 'https://jackett-service.gleeze.com', "data:", "https://www.google.com/recaptcha/", "https://*.google.com/recaptcha/*"],
 
-        upgradeInsecureRequests: []
+        frameSrc: [
+            "'self'",
+            "https://www.google.com"
+        ]
     }
 };
 

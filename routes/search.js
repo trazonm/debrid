@@ -1,8 +1,16 @@
 const express = require('express');
 const axios = require('axios');
+const https = require('https');
 const asyncHandler = require('../utils/asyncHandler');
 
 const router = express.Router();
+
+// Create an Axios instance with SSL verification disabled
+const axiosInstance = axios.create({
+    httpsAgent: new https.Agent({
+        rejectUnauthorized: false
+    })
+});
 
 router.get('/', asyncHandler(async (req, res) => {
     const query = req.query.query?.trim();
@@ -17,7 +25,7 @@ router.get('/', asyncHandler(async (req, res) => {
 
     const {
         data
-    } = await axios.get(apiURL);
+    } = await axiosInstance.get(apiURL);
     res.json(data);
 }));
 
