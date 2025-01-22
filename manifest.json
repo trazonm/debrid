@@ -1,7 +1,7 @@
 {
-    "name": "Debrid by BakaBoi 341",
+    "name": "Debrid by BakaBoi341",
     "short_name": "Debrid",
-    "description": "A torrent debrid service",
+    "description": "Search for torrents. Download them with Debrid. Enjoy.",
     "start_url": "/views/index.html",
     "scope": "/",
     "icons": [
