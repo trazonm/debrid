@@ -3,12 +3,6 @@ services:
     build: .
     ports:
       - "5001:5001"
-    environment:
-      - JACKETT_API_KEY=${JACKETT_API_KEY}
-      - REAL_DEBRID_AUTH=${REAL_DEBRID_AUTH}
-      - PORT=${PORT}
     volumes:
-      # Mount only necessary directories for development
-      - ./assets:/app/assets
-      - ./scripts:/app/scripts
+      - ./public:/app/public
       - ./views:/app/views

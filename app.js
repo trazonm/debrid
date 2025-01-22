@@ -29,6 +29,7 @@ const ipRoutes = require('./routes/iplog');
 const torrentRoutes = require('./routes/torrents');
 const searchRoutes = require('./routes/search');
 const accountRoutes = require('./routes/account');
+const downloadRoutes = require('./routes/downloads');
 
 // Session configuration
 app.use(session({
@@ -44,19 +45,15 @@ app.use(session({
 // Global Middleware
 app.use(logIpGeolocation);
 app.use(restrictToUS);
-// app.use(nocache());
+app.use(nocache());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Use Helmet to apply the CSP policy
 app.use(helmet.contentSecurityPolicy(cspPolicy));
 app.use(express.static(path.join(__dirname, './')));
-app.use('/assets', express.static(path.join(__dirname, 'assets')));
-app.use('/assets/icons', express.static(path.join(__dirname, 'public/assets/icons')));
 app.use('/sw.js', express.static(path.join(__dirname, 'sw.js')));
-app.use('/scripts', express.static(path.join(__dirname, 'scripts'), {
-    setHeaders: (res) => res.setHeader('Content-Type', 'application/javascript'),
-}));
+
 
 // Routes
 app.use('/', indexRoutes);
@@ -64,7 +61,7 @@ app.use('/iplog', sessionMiddleware, ipRoutes);
 app.use('/torrents', torrentRoutes);
 app.use('/search', searchRoutes);
 app.use('/account', accountRoutes);
-app.use('/downloads', sessionMiddleware, express.static(path.join(__dirname, 'views/downloads.html')));
+app.use('/downloads', sessionMiddleware, downloadRoutes);
 
 // Views setup
 app.engine('html', require('ejs').renderFile);

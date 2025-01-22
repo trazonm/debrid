@@ -77,12 +77,12 @@ fetch('/account/downloads')
         tableBody.innerHTML = ''; // Clear previous entries
         data.forEach(download => {
             const row = document.createElement('tr');
-            row.className = "downloads-table"; 
+            row.className = "downloads-table";
             row.innerHTML = `
                 <td>${download.id}</td>
                 <td>${download.filename}</td>
                 <td id="progress-${download.id}">${download.progress}%</td>
-                <td id="download-link">${download.progress === 100 && download.link ? `<a href="${download.link}" target="_blank"> <img class="download-page-img" src="../assets/icons/download.png" alt="Download"></a><img class="download-page-img" src="../assets/icons/copy.png" alt="Copy" onclick="copyToClipboard('${download.link}')">` : 'In Progress'}</td>`;
+                <td id="download-link">${download.progress === 100 && download.link ? `<a href="${download.link}" target="_blank"> <img class="download-page-img" src="../public/assets/icons/download.png" alt="Download"></a><img class="download-page-img" src="../public/assets/icons/copy.png" alt="Copy" onclick="copyToClipboard('${download.link}')">` : 'In Progress'}</td>`;
             tableBody.appendChild(row);
             if (download.progress < 100) {
                 checkProgress(download.id); // Check progress immediately
