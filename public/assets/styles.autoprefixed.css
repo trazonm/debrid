@@ -7,6 +7,9 @@ body {
   color: red;
 }
 
+.toast {
+  z-index: 1060 !important;
+}
 
 #offcanvasNavbar {
   background: rgba(0, 0, 0, 0.477);
@@ -26,11 +29,15 @@ body {
   visibility: hidden !important;
 }
 
-#killua {
-  max-width: 200px;
-  max-height: 200px;
+.killua {
+  max-width: 50vw;
+  max-height: 25vh;
   filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
   animation: colorCycle 3s infinite ease-in-out; /* Adding animation */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
 }
 
 /* @keyframes colorCycle {
@@ -232,7 +239,7 @@ html {
 #downloadsTable {
   color: white;
   border-radius: 8px;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 #downloadsTable th,
@@ -293,5 +300,5 @@ html {
 }
 
 .download-page-img:hover {
-  filter: invert(14%) sepia(94%) saturate(3817%) hue-rotate(279deg) brightness(93%) contrast(138%) !important;
+  filter: invert(60%) sepia(21%) saturate(3765%) hue-rotate(72deg) brightness(88%) contrast(78%) !important;
 }

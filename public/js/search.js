@@ -1,4 +1,3 @@
-// api.js
 import {
     setupPagination
 } from './pagination.js';
@@ -36,8 +35,19 @@ export function sendSearchRequest() {
         .catch(error => {
             document.getElementById('loadingSpinner').style.visibility = 'hidden';
             console.error('Error:', error);
-            // Display the error toast
-            const errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
-            errorToast.show();
+
+            if (query === '') {
+                // Display the error toast
+                const errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
+                const toastBody = document.getElementById('toast-body');
+                toastBody.innerHTML = 'Search query can\'t be empty.';
+                errorToast.show();
+            } else {
+                // Display the error toast
+                const errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
+                const toastBody = document.getElementById('toast-body');
+                toastBody.innerHTML = error.message;
+                errorToast.show();
+            }
         });
 }

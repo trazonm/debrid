@@ -32,7 +32,7 @@ function copyToClipboard(text) {
 function showAlert(message) {
     const alertPlaceholder = document.getElementById('alertPlaceholder');
     const alert = document.createElement('div');
-    alert.className = 'alert alert-success alert-dismissible fade show';
+    alert.className = 'alert alert-light alert-dismissible fade show';
     alert.role = 'alert';
     alert.innerHTML = `
         ${message}

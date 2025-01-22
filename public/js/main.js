@@ -62,3 +62,18 @@ document.getElementById('searchInput').addEventListener('keypress', function (ev
     document.getElementById('search-button').click(); // Triggers the search button click
   }
 });
+
+document.getElementById('login-form').addEventListener('keypress', function (event) {
+  if (event.key === 'Enter') {
+    event.preventDefault(); // Prevents the default form submission if inside a form
+    document.getElementById('login-button').click(); // Triggers the search button click
+  }
+});
+
+document.getElementById('signup-form').addEventListener('keypress', function (event) {
+  if (event.key === 'Enter') {
+    event.preventDefault(); // Prevents the default form submission if inside a form
+    document.getElementById('signup-button').click(); // Triggers the search button click
+  }
+});
+
