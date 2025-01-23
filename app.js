@@ -33,11 +33,11 @@ const downloadRoutes = require('./routes/downloads');
 
 // Session configuration
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'default_secret',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: {
-        secure: false, // Set to true if using HTTPS
+        secure: true, // Set to true if using HTTPS
         maxAge: 24 * 60 * 60 * 1000 // Session lasts for 24 hours
     }
 }));
