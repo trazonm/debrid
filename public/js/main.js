@@ -26,6 +26,17 @@ function getCookie(name) {
 
 const isLoggedIn = getCookie('isLoggedIn') || 'false';
 
+window.addEventListener("beforeunload", function (e) {
+  // Get the URL of the next page (if available)
+  const nextUrl = document.activeElement?.href;
+
+  // Check if the next URL is within the same domain
+  if (!nextUrl || !nextUrl.includes(window.location.origin)) {
+      // Clear a specific cookie if leaving the website
+      document.cookie = "isLoggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  }
+});
+
 document.addEventListener("DOMContentLoaded", function () {
   if (isLoggedIn === true || isLoggedIn === 'true') {
     document.getElementById('auth-link').style.visibility = 'hidden';
@@ -76,4 +87,5 @@ document.getElementById('signup-form').addEventListener('keypress', function (ev
     document.getElementById('signup-button').click(); // Triggers the search button click
   }
 });
+
 

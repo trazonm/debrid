@@ -333,15 +333,10 @@ html {
   transition: opacity 0.5s ease-in-out;
 }
 
-#download-link {
-  color: #9400D3;
-  /* Deep purple color */
-  text-shadow: 0 0 5px #9400D3, 0 0 10px #9400D3, 0 0 20px #9400D3,
-    0 0 40px #FF00FF, 0 0 80px #FF00FF, 0 0 90px #FF00FF,
-    0 0 100px #FF00FF, 0 0 150px #FF00FF;
+#download-link a {
   font-family: Bahnschrift, 'DIN Alternate', 'Franklin Gothic Medium', 'Nimbus Sans Narrow', sans-serif-condensed, sans-serif;
-  font-weight: normal;
-
+  text-decoration: none;
+  font-weight: lighter;
 }
 
 .download-page-img {

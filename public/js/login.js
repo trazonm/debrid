@@ -29,7 +29,7 @@ function login(token) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                successToastBody.innerHTML = 'Log in successful!';
+                successToastBody.innerHTML = 'Login successful!';
                 successToast.show();
                 setCookie('isLoggedIn', true, 1);
 

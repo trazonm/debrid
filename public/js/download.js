@@ -114,7 +114,7 @@ export function checkProgress(id, progressText, downloadCell) {
                 .catch(error => {
                     console.error('Error checking progress:', error);
                     clearInterval(interval);
-                    alert('An error occurred while updating progress.');
+                //     alert('An error occurred while updating progress.');
                 });
         }, 2000);
     } else {

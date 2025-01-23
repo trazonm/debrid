@@ -1,9 +1,38 @@
+fetch('/account/downloads')
+    .then(response => response.json())
+    .then(data => {
+        const tableBody = document.getElementById('downloadsTableBody');
+        tableBody.innerHTML = ''; // Clear previous entries
+        data.reverse();
+        data.forEach(download => {
+            const row = document.createElement('tr');
+            row.className = "downloads-table";
+            row.innerHTML = `
+                <td>${download.id}</td>
+                <td>${download.filename}</td>
+                <td id="progress-${download.id}">${download.progress}%</td>
+                <td id="download-link">${download.progress === 100 && download.link ? `<a href="${download.link}" target="_blank"> <img class="download-page-img" src="../public/assets/icons/download.png" alt="Download"></a><img class="download-page-img" src="../public/assets/icons/copy.png" alt="Copy" onclick="copyToClipboard('${download.link}')">` : 'In Progress'}</td>`;
+            tableBody.appendChild(row);
+            if (download.progress < 100) {
+                checkProgress(download.id); // Check progress immediately
+            }
+        });
+    })
+    .catch(error => {
+        console.error('Error fetching downloads:', error);
+    });
+
 function updateProgressCell(progressCell, progress) {
     progressCell.innerText = `${progress}%`;
 }
 
-function updateLinkCell(linkCell, downloadLink) {
-    linkCell.innerHTML = `<a href="${downloadLink}" target="_blank">Download</a>`;
+function updateLinkCell(downloadLinkCell, downloadLink) {
+    downloadLinkCell.innerHTML = `
+        <a href="${downloadLink}" target="_blank">
+            <img class="download-page-img" src="../public/assets/icons/download.png" alt="Download">
+        </a>
+        <img class="download-page-img" src="../public/assets/icons/copy.png" alt="Copy" onclick="copyToClipboard('${downloadLink}')">
+    `;
 }
 
 function sendProgressUpdate(id, filename, progress, downloadLink) {
@@ -69,26 +98,3 @@ function checkProgress(id) {
             });
     }, 1000);
 }
-
-fetch('/account/downloads')
-    .then(response => response.json())
-    .then(data => {
-        const tableBody = document.getElementById('downloadsTableBody');
-        tableBody.innerHTML = ''; // Clear previous entries
-        data.forEach(download => {
-            const row = document.createElement('tr');
-            row.className = "downloads-table";
-            row.innerHTML = `
-                <td>${download.id}</td>
-                <td>${download.filename}</td>
-                <td id="progress-${download.id}">${download.progress}%</td>
-                <td id="download-link">${download.progress === 100 && download.link ? `<a href="${download.link}" target="_blank"> <img class="download-page-img" src="../public/assets/icons/download.png" alt="Download"></a><img class="download-page-img" src="../public/assets/icons/copy.png" alt="Copy" onclick="copyToClipboard('${download.link}')">` : 'In Progress'}</td>`;
-            tableBody.appendChild(row);
-            if (download.progress < 100) {
-                checkProgress(download.id); // Check progress immediately
-            }
-        });
-    })
-    .catch(error => {
-        console.error('Error fetching downloads:', error);
-    });
