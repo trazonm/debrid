@@ -4,8 +4,11 @@ const asyncHandler = require('../utils/asyncHandler');
 const { getRealDebridHeaders } = require('../utils/realDebrid');
 const axios = require('axios');
 const qs = require('querystring');
-
+const dns = require('dns');
 const router = express.Router();
+
+dns.setDefaultResultOrder('ipv4first'); // Node.js 16.4.0+ only
+
 
 router.put('/addTorrent', upload.single('file'), asyncHandler(async (req, res) => {
     if (!req.file) {

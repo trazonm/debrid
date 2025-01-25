@@ -8,11 +8,12 @@ export function generateLink(link, downloadCell) {
     if (!progressText) {
         progressText = document.createElement('span');
         progressText.className = 'progress-text';
-        progressText.innerText = 'Please Wait';
+        progressText.innerText = 'Adding to downloads';
         downloadCell.appendChild(progressText);
     }
 
     startLoadingAnimation(progressText);
+    preventPageUnload(true); // Prevent page unload
 
     (async () => {
         let id;
@@ -22,7 +23,8 @@ export function generateLink(link, downloadCell) {
             console.error('Error:', error);
             alert('An error occurred while generating the link.');
             if (downloadButton) downloadButton.style.display = 'block';
-            stopLoadingAnimation();
+            stopLoadingAnimation(progressText);
+            preventPageUnload(false); // Allow page unload
             return;
         }
 
@@ -34,13 +36,26 @@ function startLoadingAnimation(progressText) {
     let dotCount = 0;
     const loadingInterval = setInterval(() => {
         dotCount = (dotCount + 1) % 4;
-        progressText.innerText = `Please Wait${'.'.repeat(dotCount)}`;
+        progressText.innerText = `Adding to downloads${'.'.repeat(dotCount)}`;
     }, 500);
     progressText.loadingInterval = loadingInterval;
 }
 
 function stopLoadingAnimation(progressText) {
     clearInterval(progressText.loadingInterval);
+}
+
+function preventPageUnload(prevent) {
+    if (prevent) {
+        window.addEventListener('beforeunload', handleBeforeUnload);
+    } else {
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+    }
+}
+
+function handleBeforeUnload(event) {
+    event.preventDefault();
+    event.returnValue = '';
 }
 
 async function handleLink(link) {
@@ -104,12 +119,17 @@ export function checkProgress(id, progressText, downloadCell) {
                     const progress = data.progress;
                     progressText.innerText = `Progress: ${progress}%`;
 
-                    updateDownloadProgress(id, data.filename, progress);
-
-                    if (progress >= 100) {
-                        clearInterval(interval);
-                        finalizeDownload(id, data.filename, data.links[0], downloadCell);
+                    if (!isNaN(progress)) {
+                        preventPageUnload(false); // Allow page unload as soon as progress is a number
                     }
+
+                    updateDownloadProgress(id, data.filename, progress)
+                        .then(() => {
+                            if (progress >= 100) {
+                                clearInterval(interval);
+                                finalizeDownload(id, data.filename, data.links[0], downloadCell);
+                            }
+                        });
                 })
                 .catch(error => {
                     console.error('Error checking progress:', error);
@@ -119,11 +139,12 @@ export function checkProgress(id, progressText, downloadCell) {
         }, 2000);
     } else {
         finalizeDownload('Invalid Torrent', downloadCell);
+        preventPageUnload(false); // Allow page unload for invalid torrent
     }
 }
 
 function updateDownloadProgress(id, filename, progress) {
-    fetch('/account/updateDownload', {
+    return fetch('/account/updateDownload', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
