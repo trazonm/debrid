@@ -191,7 +191,6 @@ export function finalizeDownload(id, filename, downloadLink, downloadCell) {
             })
             .catch(error => {
                 console.error('Error generating download link:', error);
-                alert('An error occurred while generating the download link.');
             });
     } else {
         const downloadButton = document.createElement('button');
@@ -200,5 +199,6 @@ export function finalizeDownload(id, filename, downloadLink, downloadCell) {
         downloadButton.onclick = () => { };
         downloadCell.innerHTML = '';
         downloadCell.appendChild(downloadButton);
+        updateDownloadProgress(id, 'Invalid Torrent', 0);
     }
 }

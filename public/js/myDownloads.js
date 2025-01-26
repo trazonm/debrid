@@ -24,7 +24,7 @@ fetch('/account/downloads')
                 }
                 </td>`;
             tableBody.appendChild(row);
-            if (download.progress < 100) {
+        if (download.progress && !download.link && !download.filename === 'Invalid Torrent') {
                 checkProgress(download.id); // Check progress immediately
             }
         });
@@ -68,7 +68,7 @@ function updateLinkCell(downloadLinkCell, downloadLink) {
             <img class="download-page-img" src="../public/assets/icons/download.png" alt="Download">
         </a>
         <img class="download-page-img" src="../public/assets/icons/copy.png" alt="Copy" onclick="copyToClipboard('${downloadLink}')">
-        <img class="download-page-delete" src="../public/assets/icons/delete.png" alt="Delete" onclick="deleteDownload('${download.id}')">
+        <img class="download-page-delete" src="../public/assets/icons/delete.png" alt="Delete" onclick="deleteDownload('${downloadLinkCell.parentElement.firstElementChild.textContent}')">
     `;
 
     // Add event listeners to the newly created elements
