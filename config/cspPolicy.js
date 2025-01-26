@@ -41,7 +41,8 @@ const cspPolicy = {
 
         frameSrc: [
             "'self'",
-            "https://www.google.com"
+            "https://www.google.com",
+            "https://jcw87.github.io/"
         ]
     }
 };

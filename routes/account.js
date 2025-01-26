@@ -1,9 +1,8 @@
 const express = require('express');
-const { createUser, findUserByUsername, updateUserDownloads } = require('../models/user');
+const { createUser, findUserByUsername, updateUserDownloads, deleteDownloadById } = require('../models/user');
 const sessionMiddleware = require('../middlewares/authMiddleware');
 const bcrypt = require('bcrypt'); // Add bcrypt for password hashing
 const fetch = require('node-fetch'); // Add node-fetch for making HTTP requests
-
 const router = express.Router();
 
 async function verifyRecaptcha(token) {
@@ -16,7 +15,6 @@ async function verifyRecaptcha(token) {
         body: `secret=${secretKey}&response=${token}`
     });
     const data = await response.json();
-    console.log(data);
     return data.success;
 }
 
@@ -27,7 +25,6 @@ router.post('/register', async (req, res) => {
     }
     const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
     await createUser(username, hashedPassword); // Save the hashed password
-    req.session.isLoggedIn = true;
     res.status(201).json({ message: 'User registered successfully' });
 });
 
@@ -40,7 +37,11 @@ router.post('/login', async (req, res) => {
     const user = await findUserByUsername(username);
     if (user && await bcrypt.compare(password, user.password)) { // Compare hashed passwords
         req.session.user = username;
-        req.session.isLoggedIn = true;
+        res.cookie('isLoggedIn', 'true', {
+            path: '/',
+            sameSite: 'Lax',
+            maxAge: 24 * 60 * 60 * 1000 // 24 hours in milliseconds
+        });
         res.json({ success: true });
     } else {
         res.status(401).json({ success: false });
@@ -72,12 +73,22 @@ router.get('/downloads', sessionMiddleware, async (req, res) => {
     })));
 });
 
+router.delete('/delete/:id', sessionMiddleware, async (req, res) => {
+    const user = await findUserByUsername(req.session.user);
+    await deleteDownloadById(user.username, req.params.id);
+    res.json({ success: true });
+});
+
 router.post('/logout', (req, res) => {
     req.session.destroy(err => {
         if (err) {
             return res.status(500).json({ success: false, message: 'Failed to logout' });
         }
-        res.clearCookie('isLoggedIn');
+        res.cookie('isLoggedIn', '', {
+            path: '/',
+            sameSite: 'Lax',
+            maxAge: 0 // Clears the cookie immediately
+        });
         res.json({ success: true });
     });
 });

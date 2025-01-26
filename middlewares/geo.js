@@ -23,7 +23,7 @@ const logIpGeolocation = async (req, res, next) => {
     }
 
     if (isPrivateIp(clientIp)) {
-        console.log('Private or localhost IP detected, skipping geolocation.');
+        // console.log('Private or localhost IP detected, skipping geolocation.');
         return next();
     }
 

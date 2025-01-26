@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 Page - Not Found</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .message {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .go-home-button,
+        .play-game-button {
+            color: white;
+            background-color: red;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .go-home-button:hover,
+        .play-game-button:hover {
+            background-color: darkred;
+        }
+
+        iframe {
+            border: none;
+            width: 100vw;
+            height: 90vh;
+            margin-top: 20px;
+        }
+
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background-color: black;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="particleCanvas"></canvas>
+    <div class="container">
+        <div id="message" class="message">
+            Oops! The page you're looking for could not be found.
+        </div>
+        <div id="buttons" class="buttons">
+            <button class="go-home-button" onclick="goHome()">Go Home</button>
+            <button class="play-game-button" id="playGame" onclick="playGame()">Play Game</button>
+        </div>
+        <iframe id="gameIframe" src="https://jcw87.github.io/c2-sans-fight/" style="display: none;"
+            tabindex="0"></iframe>
+    </div>
+
+    <script>
+        function goHome() {
+            // Redirect to homepage ('/')
+            window.location.href = '/';
+        }
+
+        function playGame() {
+            // Hide the message and buttons, show the game iframe
+            document.getElementById('message').style.display = 'none';
+            document.getElementById('playGame').style.display = 'none';
+            document.getElementById('gameIframe').style.display = 'block';
+            document.getElementById('gameIframe').focus();
+            document.getElementById('gameIframe').scrollIntoView();
+            document.getElementById('particleCanvas').style.display = 'none';
+        }
+    </script>
+    <script src="../public/js/particleBackground.js"></script> <!-- New particle script -->
+</body>
+
+</html>

@@ -7,16 +7,17 @@ body {
   color: red;
 }
 
-.toast {
-  z-index: 1060 !important;
-}
-
 #offcanvasNavbar {
   background: rgba(0, 0, 0, 0.477);
 }
 
+.offcanvas-title {
+  font-family: 'Clubbed to Life', sans-serif;
+  font-size: 2em;
+}
+
 .navbar-nav {
-  font-family: 'Long distance call', sans-serif;
+  font-family: 'LicensePlates', sans-serif;
   font-size: 5em;
 }
 
@@ -68,24 +69,23 @@ body {
 }
 
 .toast {
-
+  z-index: 1060 !important;
   font-family: 'anime ace', sans-serif;
-  font-size: 0.75em !important;
-
+  font-size: 1em !important;
 }
 
-#authModalLabel {
-  /* color: rgba(219, 42, 42, 1); */
-
+#toast-body-success {
+  font-size: 0.75em !important;
 }
 
 .auth-dialog {
   background: rgb(19, 18, 18) !important;
   max-height: 50vh !important;
-  
+
 }
 
-#authModalHeader, #authModalFooter {
+#authModalHeader,
+#authModalFooter {
   background-color: rgb(12, 11, 12) !important;
 }
 
@@ -254,14 +254,6 @@ input:-webkit-autofill {
 
 /* Downloads Page */
 
-#downloadsTableBody {
-  text-align: center;
-}
-
-#downloads-header {
-  color: white !important;
-  text-align: center !important;
-}
 
 #downloadsBody,
 html {
@@ -271,6 +263,30 @@ html {
   height: 100%;
   overflow: hidden;
   font-family: ui-rounded, 'Hiragino Maru Gothic ProN', Quicksand, Comfortaa, Manjari, 'Arial Rounded MT', 'Arial Rounded MT Bold', Calibri, source-sans-pro, sans-serif;
+}
+
+#downloadsTableBody {
+  text-align: center;
+  font-family: 'Genome', sans-serif;
+  vertical-align: middle; /* Vertically centers the text in table cells */
+
+                                                
+}
+
+#downloads-header {
+  color: white !important;
+  text-align: center !important;
+
+}
+
+#downloads-header th {
+
+  background: rgba(0, 0, 0, 0.5);
+  font-size: 1.5em;
+  font-family: 'Clubbed to Life', sans-serif;
+  color: rgb(255, 171, 252);
+
+
 }
 
 .video-background {
@@ -307,16 +323,15 @@ html {
   font-family: 'Long distance call', sans-serif;
   font-size: 8em;
   margin-bottom: 20px;
-  color: #9400D3;
-  /* Deep purple color */
-  /* text-shadow: 0 0 5px #9400D3, 0 0 10px #9400D3, 0 0 20px #9400D3, 
-               0 0 40px #FF00FF, 0 0 80px #FF00FF, 0 0 90px #FF00FF, 
-               0 0 100px #FF00FF, 0 0 150px #FF00FF; */
+  color: #ff00bb;
+}
 
+#downloadsHeader span {
+  background: rgb(0, 0, 0);
 }
 
 .downloads-table td {
-  background-color: rgba(0, 0, 0, 0.5) !important;
+  background-color: rgba(0, 0, 0, 0.557) !important;
   /* Semi-transparent background */
 }
 
@@ -339,17 +354,31 @@ html {
   font-weight: lighter;
 }
 
-.download-page-img {
-  filter: invert(99%) sepia(1%) saturate(20%) hue-rotate(78deg) brightness(105%) contrast(100%) !important;
-  max-width: 3vw;
+/* Base styles for the .download-page-img class */
+.download-page-img,
+.download-page-delete {
+  filter: invert(100%) brightness(100%);
+  transition: filter 0.3s ease, filter 0.3s ease;
   max-height: 3vh;
   min-width: 30px;
-  transition: filter 0.3s ease-in-out;
-  /* Adding transition effect */
+  min-height: 30px;
   padding: 5px;
   cursor: pointer;
 }
 
+/* Hover effect for all .download-page-img elements */
 .download-page-img:hover {
-  filter: invert(60%) sepia(21%) saturate(3765%) hue-rotate(72deg) brightness(88%) contrast(78%) !important;
+  transform: scale(1.2);
+  /* Increase the size by 20% */
+  transition: transform 0.3s ease;
+  /* Smooth scaling effect */
+}
+
+/* Specific hover effect for the #delete-button */
+.download-page-delete:hover {
+  filter: invert(29%) sepia(32%) saturate(5149%) hue-rotate(336deg) brightness(100%) contrast(99%) !important;
+  transform: scale(1.2);
+  /* Increase the size by 20% */
+  transition: transform 0.3s ease;
+  /* Smooth scaling effect */
 }

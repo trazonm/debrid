@@ -50,10 +50,27 @@ const updateUserDownloads = async (username, downloads) => {
     await pool.query(query, [JSON.stringify(downloads), username]);
 };
 
+const deleteDownloadById = async (userId, downloadId) => {
+    console.log('userId:', userId);
+    console.log('downloadId:', downloadId);
+
+    const query = `
+        UPDATE users
+        SET downloads = (
+            SELECT jsonb_agg(elem)
+            FROM jsonb_array_elements(downloads) elem
+            WHERE elem->>'id' != $2
+        )
+        WHERE username = $1;
+    `;
+    await pool.query(query, [userId, downloadId]);
+};
+
 module.exports = {
     createUserTable,
     getUsers,
     findUserByUsername,
     createUser,
     updateUserDownloads,
+    deleteDownloadById
 };

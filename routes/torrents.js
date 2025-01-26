@@ -10,6 +10,7 @@ const router = express.Router();
 dns.setDefaultResultOrder('ipv4first'); // Node.js 16.4.0+ only
 
 
+//add torrent file
 router.put('/addTorrent', upload.single('file'), asyncHandler(async (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: 'No torrent file provided' });
@@ -21,6 +22,20 @@ router.put('/addTorrent', upload.single('file'), asyncHandler(async (req, res) =
     const { data } = await axios.put('https://api.real-debrid.com/rest/1.0/torrents/addTorrent', req.file.buffer, { headers });
     await selectFiles(data.id, headers);
     res.json(data);
+}));
+
+//delete torrent
+router.delete('/delete/:id', asyncHandler(async (req, res) => {
+    const {
+        id
+    } = req.params;
+    console.log(`Received request to delete torrent with id: ${id}`);
+    const {
+        data
+    } = await axios.delete(`https://api.real-debrid.com/rest/1.0/torrents/delete/${id}`, {
+        headers: getRealDebridHeaders()
+    });
+    res.json({success: true});
 }));
 
 // Add magnet link

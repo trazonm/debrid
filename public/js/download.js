@@ -110,21 +110,19 @@ async function addTorrent(redirectUrl, link) {
 
 export function checkProgress(id, progressText, downloadCell) {
     stopLoadingAnimation(progressText);
-    progressText.innerText = `Progress: 0%`;
+    progressText.innerText = `Almost there...`;
     if (id != undefined) {
         const interval = setInterval(() => {
             fetch(`/torrents/checkProgress/${id}`)
                 .then(response => response.json())
                 .then(data => {
                     const progress = data.progress;
-                    progressText.innerText = `Progress: ${progress}%`;
-
                     if (!isNaN(progress)) {
                         preventPageUnload(false); // Allow page unload as soon as progress is a number
                     }
-
                     updateDownloadProgress(id, data.filename, progress)
                         .then(() => {
+                            progressText.innerText = `Progress: ${progress}%`;
                             if (progress >= 100) {
                                 clearInterval(interval);
                                 finalizeDownload(id, data.filename, data.links[0], downloadCell);
@@ -134,7 +132,7 @@ export function checkProgress(id, progressText, downloadCell) {
                 .catch(error => {
                     console.error('Error checking progress:', error);
                     clearInterval(interval);
-                //     alert('An error occurred while updating progress.');
+                    //     alert('An error occurred while updating progress.');
                 });
         }, 2000);
     } else {
@@ -199,7 +197,7 @@ export function finalizeDownload(id, filename, downloadLink, downloadCell) {
         const downloadButton = document.createElement('button');
         downloadButton.className = 'btn btn-outline-danger';
         downloadButton.textContent = 'Invalid Torrent';
-        downloadButton.onclick = () => {};
+        downloadButton.onclick = () => { };
         downloadCell.innerHTML = '';
         downloadCell.appendChild(downloadButton);
     }

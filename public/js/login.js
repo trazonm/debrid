@@ -6,7 +6,7 @@ const successToast = new bootstrap.Toast(document.getElementById('successToast')
 const successToastBody = document.getElementById('toast-body-success');
 
 function login(token) {
-    const username = document.getElementById('login-username').value.trim();
+    const username = document.getElementById('login-username').value.trim().toLowerCase();
     const password = document.getElementById('login-password').value.trim();
 
     if (!username || !password) {
@@ -31,7 +31,7 @@ function login(token) {
             if (data.success) {
                 successToastBody.innerHTML = 'Login successful!';
                 successToast.show();
-                setCookie('isLoggedIn', true, 1);
+                localStorage.setItem('username', username); 
 
                 document.getElementById('auth-link').style.visibility = 'hidden';
                 document.getElementById('search-section').style.visibility = 'visible';
@@ -43,6 +43,7 @@ function login(token) {
 
                 const authModal = bootstrap.Modal.getInstance(document.getElementById('authModal'));
                 authModal.hide();
+                document.getElementById('offcanvasNavbarLabel').innerHTML = 'Welcome, ' + username + '!';
 
                 const elements = document.querySelectorAll('.fade-in');
                 elements.forEach(el => {
@@ -61,7 +62,7 @@ function login(token) {
 
 
 function signup() {
-    const username = document.getElementById('signup-username').value.trim();
+    const username = document.getElementById('signup-username').value.trim().toLowerCase();
     const password = document.getElementById('signup-password').value.trim();
 
     if (!username || !password) {
@@ -105,19 +106,6 @@ function signup() {
 
 }
 
-
-function setCookie(name, value, days) {
-    let expires = "";
-    if (days) {
-        let date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-        expires = "; expires=" + date.toUTCString();
-    }
-    document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Lax";
-    console.log("Cookie set: " + document.cookie);
-}
-
-
 document.getElementById('logout-button').addEventListener('click', function () {
     fetch('/account/logout', {
         method: 'POST',
@@ -128,7 +116,6 @@ document.getElementById('logout-button').addEventListener('click', function () {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                setCookie('isLoggedIn', false, 1);
                 window.location.href = '/';
             } else {
                 toastBody.innerHTML = 'An error occurred. Please try again.';
@@ -136,3 +123,8 @@ document.getElementById('logout-button').addEventListener('click', function () {
             }
         });
 });
+
+function getUser() {
+    const username = localStorage.getItem('username');
+    document.getElementById('offcanvasNavbarLabel').innerHTML = 'Welcome, ' + username + '!';
+}

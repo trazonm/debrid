@@ -26,19 +26,8 @@ function getCookie(name) {
 
 const isLoggedIn = getCookie('isLoggedIn') || 'false';
 
-window.addEventListener("beforeunload", function (e) {
-  // Get the URL of the next page (if available)
-  const nextUrl = document.activeElement?.href;
-
-  // Check if the next URL is within the same domain
-  if (!nextUrl || !nextUrl.includes(window.location.origin)) {
-      // Clear a specific cookie if leaving the website
-      document.cookie = "isLoggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-  }
-});
-
 document.addEventListener("DOMContentLoaded", function () {
-  if (isLoggedIn === true || isLoggedIn === 'true') {
+  if (isLoggedIn === 'true') {
     document.getElementById('auth-link').style.visibility = 'hidden';
     document.getElementById('search-section').style.visibility = 'visible'; // Show the search section = 'inline-block';
     document.getElementById('navbar').style.display = 'block'; // Show the navbar
@@ -57,12 +46,12 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // CSS class to trigger the fade-in
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
   setTimeout(() => {
-      const elements = document.querySelectorAll('.fade-in');
-      elements.forEach(el => {
-          el.style.opacity = 1; // Trigger the fade-in
-      });
+    const elements = document.querySelectorAll('.fade-in');
+    elements.forEach(el => {
+      el.style.opacity = 1; // Trigger the fade-in
+    });
   }, 0); // Delay to allow display changes to take effect
 });
 

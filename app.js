@@ -5,7 +5,11 @@ const helmet = require('helmet');
 const nocache = require('nocache');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const cookieParser = require('cookie-parser'); // Add cookie-parser
 const { createUserTable } = require('./models/user');
+let isServerInitialized = false;
+
+const sessionMiddleware = require('./middlewares/authMiddleware');
 
 const app = express();
 
@@ -20,7 +24,6 @@ createUserTable().then(() => {
 const cspPolicy = require('./config/cspPolicy');
 
 // Middleware imports
-const sessionMiddleware = require('./middlewares/authMiddleware');
 const { logIpGeolocation, restrictToUS } = require('./middlewares/geo');
 
 // Route imports
@@ -42,18 +45,27 @@ app.use(session({
     }
 }));
 
+// Middleware to set isLoggedIn cookie to false on server restart
+app.use((req, res, next) => {
+    if (!isServerInitialized) {
+        res.cookie('isLoggedIn', 'false', { path: '/', sameSite: 'Lax' });
+        isServerInitialized = true;
+    }
+    next();
+});
+
 // Global Middleware
 app.use(logIpGeolocation);
 app.use(restrictToUS);
 app.use(nocache());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser()); // Use cookie-parser
 
 // Use Helmet to apply the CSP policy
 app.use(helmet.contentSecurityPolicy(cspPolicy));
 app.use(express.static(path.join(__dirname, './')));
 app.use('/sw.js', express.static(path.join(__dirname, 'sw.js')));
-
 
 // Routes
 app.use('/', indexRoutes);
@@ -62,6 +74,9 @@ app.use('/torrents', torrentRoutes);
 app.use('/search', searchRoutes);
 app.use('/account', accountRoutes);
 app.use('/downloads', sessionMiddleware, downloadRoutes);
+app.use((req, res, next) => {
+    res.status(404).render('404');
+});
 
 // Views setup
 app.engine('html', require('ejs').renderFile);

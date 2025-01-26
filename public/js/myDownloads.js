@@ -1,3 +1,5 @@
+const progressIntervals = {}; // Store intervals for each download ID
+
 fetch('/account/downloads')
     .then(response => response.json())
     .then(data => {
@@ -11,7 +13,16 @@ fetch('/account/downloads')
                 <td>${download.id}</td>
                 <td>${download.filename}</td>
                 <td id="progress-${download.id}">${download.progress}%</td>
-                <td id="download-link">${download.progress === 100 && download.link ? `<a href="${download.link}" target="_blank"> <img class="download-page-img" src="../public/assets/icons/download.png" alt="Download"></a><img class="download-page-img" src="../public/assets/icons/copy.png" alt="Copy" onclick="copyToClipboard('${download.link}')">` : 'In Progress'}</td>`;
+                <td id="download-link">
+                    ${download.progress === 100 && download.link ? `
+                        <a href="${download.link}" target="_blank">
+                            <img class="download-page-img" src="../public/assets/icons/download.png" alt="Download">
+                        </a>
+                        <img class="download-page-img" src="../public/assets/icons/copy.png" alt="Copy" onclick="copyToClipboard('${download.link}')">
+                        <img class="download-page-delete" src="../public/assets/icons/delete.png" alt="Delete" onclick="deleteDownload('${download.id}')">
+                        ` : `<img class="download-page-delete" src="../public/assets/icons/delete.png" alt="Delete" onclick="deleteDownload('${download.id}')">`
+                }
+                </td>`;
             tableBody.appendChild(row);
             if (download.progress < 100) {
                 checkProgress(download.id); // Check progress immediately
@@ -32,8 +43,48 @@ function updateLinkCell(downloadLinkCell, downloadLink) {
             <img class="download-page-img" src="../public/assets/icons/download.png" alt="Download">
         </a>
         <img class="download-page-img" src="../public/assets/icons/copy.png" alt="Copy" onclick="copyToClipboard('${downloadLink}')">
+        <img class="download-page-delete" src="../public/assets/icons/delete.png" alt="Delete" onclick="deleteDownload('${download.id}')">
     `;
 }
+
+function deleteDownload(id) {
+
+    fetch(`/torrents/delete/${id}`, {
+        method: 'DELETE'
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if (data.success === true) {
+                console.log('Deleted download with ID:', id);
+
+            }
+        })
+
+    fetch(`/account/delete/${id}`, {
+        method: 'DELETE'
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if (data.success === true) {
+                // Find the row based on the ID text in the first cell
+                const rows = document.querySelectorAll('tr.downloads-table');
+                rows.forEach(row => {
+                    const firstCell = row.querySelector('td:first-child');
+                    if (firstCell && firstCell.textContent.trim() === id) {
+                        row.remove();
+                    }
+                });
+                // Clear the interval for the specific download ID
+                if (progressIntervals[id]) {
+                    clearInterval(progressIntervals[id]);
+                    delete progressIntervals[id];
+                }
+            }
+        });
+}
+
 
 function sendProgressUpdate(id, filename, progress, downloadLink) {
     fetch('/account/updateDownload', {
@@ -97,4 +148,5 @@ function checkProgress(id) {
                 }
             });
     }, 1000);
+    progressIntervals[id] = interval; // Store the interval for the download ID
 }
