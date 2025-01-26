@@ -32,7 +32,7 @@ export function showPage(page) {
 
         const downloadButton = document.createElement('button');
         downloadButton.className = 'btn btn-outline-danger';
-        downloadButton.textContent = 'Add to Downloads?';
+        downloadButton.textContent = 'Add to Queue';
         downloadButton.onclick = () => generateLink(item.MagnetUri || item.Link, downloadCell);
         downloadCell.appendChild(downloadButton);
 

@@ -8,7 +8,7 @@ export function generateLink(link, downloadCell) {
     if (!progressText) {
         progressText = document.createElement('span');
         progressText.className = 'progress-text';
-        progressText.innerText = 'Adding to downloads';
+        progressText.innerText = 'Adding';
         downloadCell.appendChild(progressText);
     }
 
@@ -36,7 +36,7 @@ function startLoadingAnimation(progressText) {
     let dotCount = 0;
     const loadingInterval = setInterval(() => {
         dotCount = (dotCount + 1) % 4;
-        progressText.innerText = `Adding to downloads${'.'.repeat(dotCount)}`;
+        progressText.innerText = `Adding${'.'.repeat(dotCount)}`;
     }, 500);
     progressText.loadingInterval = loadingInterval;
 }
