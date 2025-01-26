@@ -31,7 +31,7 @@ fetch('/account/downloads')
 
         // Add event listeners to the dynamically created download images
         const downloadImages = document.querySelectorAll('.download-page-img');
-        const deleteButton = document.getElementById('download-page-delete');
+        const deleteButton = document.querySelectorAll('.download-page-delete');
         const audio = new Audio('../public/assets/audio/hover.wav');
 
         // Preload audio to avoid delays
@@ -45,10 +45,12 @@ fetch('/account/downloads')
             });
         });
 
-        deleteButton.addEventListener('click', () => {
-            audio.currentTime = 0;
-            audio.play().catch(err => console.error("Playback failed:", err));
+        deleteButton.forEach(img => {
+            img.addEventListener('click', () => {
+                audio.currentTime = 0;
+                audio.play().catch(err => console.error("Playback failed:", err));
 
+            });
         });
     })
     .catch(error => {
@@ -71,7 +73,7 @@ function updateLinkCell(downloadLinkCell, downloadLink) {
 
     // Add event listeners to the newly created elements
     const downloadImages = downloadLinkCell.querySelectorAll('.download-page-img');
-    const deleteButton = downloadLinkCell.querySelectorAll('.download-page-img');
+    const deleteButton = downloadLinkCell.querySelectorAll('.download-page-delete');
     const audio = new Audio('../public/assets/audio/hover.wav');
 
     // Preload audio to avoid delays
@@ -84,10 +86,11 @@ function updateLinkCell(downloadLinkCell, downloadLink) {
         });
     });
 
-    deleteButton.addEventListener('click', () => {
-        audio.currentTime = 0;
-        audio.play().catch(err => console.error("Playback failed:", err));
-
+    deleteButton.forEach(img => {
+        img.addEventListener('click', () => {
+            audio.currentTime = 0;
+            audio.play().catch(err => console.error("Playback failed:", err));
+        });
     });
 }
 
