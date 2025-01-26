@@ -8,7 +8,6 @@ const cookieParser = require('cookie-parser'); // Add cookie-parser
 const { createUserTable } = require('./models/user');
 const app = express();
 const fs = require('fs');
-const path = require('path');
 const sessionMiddleware = require('./middlewares/authMiddleware');
 
 let isServerInitialized = false;
