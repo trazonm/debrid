@@ -63,8 +63,9 @@ app.use(cookieParser()); // Use cookie-parser
 // Use Helmet to apply the CSP policy
 app.use(helmet.contentSecurityPolicy(cspPolicy));
 app.use(express.static(path.join(__dirname, './')));
-app.use('/sw.js', express.static(path.join(__dirname, 'sw.js')));
-
+app.use('/sw.js', (req, res) => {
+    res.sendFile(path.join(__dirname, 'sw.js')); // Adjust the path if it's in another folder
+  });
 // Routes
 app.use('/', indexRoutes);
 app.use('/iplog', sessionMiddleware, ipRoutes);
