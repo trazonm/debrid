@@ -33,7 +33,7 @@ module.exports = {
       handler: 'networkOnly', // Prevent caching of media files
     },
   ],
-  swFilePath: 'sw.js',
+  swFilePath: `sw.js?v=${Date.now()}`,
   verbose: true,
   cacheId: 'debrid-app-cache',
   maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB
