@@ -80,8 +80,9 @@ app.get('/sw.js', (req, res) => {
         }
         const version = JSON.parse(data).version;
         // Construct the file path based on the version]
-        
-        const swFilePath = path.join(__dirname, `sw.js?v=${version}.js`);
+
+        const swFilePath = path.join(__dirname, `sw-${version}.js`);
+        console.log('Service Worker file path:', swFilePath);
         
         // Ensure the versioned service worker file exists and serve it
         fs.exists(swFilePath, exists => {

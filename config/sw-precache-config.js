@@ -34,7 +34,7 @@ module.exports = {
       handler: 'networkOnly', // Prevent caching of media files
     },
   ],
-  swFilePath: `sw.js?v=${version}`, // Dynamically add versioning
+  swFilePath: `sw-${version}.js`, // Dynamically add versioning
   verbose: true,
   cacheId: 'debrid-app-cache',
   maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB

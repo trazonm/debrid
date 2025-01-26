@@ -10,7 +10,7 @@ if ('serviceWorker' in navigator) {
         const version = data.version || Date.now(); // Fallback to Date.now() if version is not found
 
         // Register the versioned sw.js file
-        navigator.serviceWorker.register(`/sw.js?v=${version}`)
+        navigator.serviceWorker.register(`/sw-${version}.js`)
           .then(registration => {
             console.log('Service Worker registered with scope:', registration.scope);
 
