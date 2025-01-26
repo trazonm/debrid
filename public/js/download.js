@@ -151,7 +151,7 @@ function updateDownloadProgress(id, filename, progress) {
             id: id,
             filename: filename,
             progress: progress,
-            link: "In Progress"
+            // link: "In Progress"
         })
     });
 }
