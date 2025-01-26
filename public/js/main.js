@@ -9,17 +9,16 @@ if ('serviceWorker' in navigator) {
       .then(data => {
         const version = data.version || Date.now(); // Fallback to Date.now() if version is not found
 
-        navigator.serviceWorker.register(`/sw.js?v=${version}`) // Add versioning for SW
+        // Register the versioned sw.js file
+        navigator.serviceWorker.register(`/sw.js?v=${version}`)
           .then(registration => {
             console.log('Service Worker registered with scope:', registration.scope);
 
-            // Check if a new service worker is waiting to activate
             if (registration.waiting) {
               console.log('New service worker is waiting to activate.');
               notifyUpdateReady(registration.waiting);
             }
 
-            // Listen for updates to the service worker
             registration.addEventListener('updatefound', () => {
               const newWorker = registration.installing;
               console.log('A new service worker is being installed.');
@@ -27,7 +26,6 @@ if ('serviceWorker' in navigator) {
               newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed') {
                   if (navigator.serviceWorker.controller) {
-                    // New service worker is waiting to activate
                     console.log('New service worker installed and waiting to activate.');
                     notifyUpdateReady(newWorker);
                   } else {

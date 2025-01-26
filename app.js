@@ -6,11 +6,14 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const cookieParser = require('cookie-parser'); // Add cookie-parser
 const { createUserTable } = require('./models/user');
-let isServerInitialized = false;
-
+const app = express();
+const fs = require('fs');
+const path = require('path');
 const sessionMiddleware = require('./middlewares/authMiddleware');
 
-const app = express();
+let isServerInitialized = false;
+
+
 
 // Initialize database
 createUserTable().then(() => {
@@ -65,14 +68,40 @@ app.use(helmet.contentSecurityPolicy(cspPolicy));
 app.use(express.static(path.join(__dirname, './')));
 
 // Serve sw.js with version query parameter
-app.use('/sw.js', (req, res) => {
+// Serve static files from the 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Serve version.json if needed
+app.use('/version.json', (req, res) => {
+    fs.readFile(path.join(__dirname, 'version.json'), 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error reading version.json:', err);
+            return res.status(500).json({ error: 'Internal Server Error' });
+        }
+        res.json(JSON.parse(data)); // Send version.json content as JSON
+    });
+});
+
+// Serve the versioned sw.js file (e.g., sw-1234567890.js)
+app.get('/sw.js', (req, res) => {
+    // Fetch the version from version.json
     fs.readFile(path.join(__dirname, 'version.json'), 'utf8', (err, data) => {
         if (err) {
             console.error('Error reading version.json:', err);
             return res.status(500).json({ error: 'Internal Server Error' });
         }
         const version = JSON.parse(data).version;
-        res.sendFile(path.join(__dirname, `sw.js?v=${version}`));
+        // Construct the file path based on the version
+        const swFilePath = path.join(__dirname, `public/sw-${version}.js`);
+        
+        // Ensure the versioned service worker file exists and serve it
+        fs.exists(swFilePath, exists => {
+            if (exists) {
+                res.sendFile(swFilePath);
+            } else {
+                res.status(404).json({ error: 'Service Worker not found' });
+            }
+        });
     });
 });
 
