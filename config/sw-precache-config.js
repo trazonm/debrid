@@ -1,4 +1,4 @@
-const version = require('./version.json').version || Date.now(); // Fallback to Date.now()
+const version = require('../version.json').version || Date.now(); // Fallback to Date.now()
 
 module.exports = {
   staticFileGlobs: [
