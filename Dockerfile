@@ -8,11 +8,11 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Copy all application files
-COPY . .
-
 # Generate the version.json file with the current timestamp
 RUN echo "{\"version\": \"$(date +%s)\"}" > version.json
+
+# Copy all application files
+COPY . .
 
 # Generate the CSS
 RUN npm run build:css
