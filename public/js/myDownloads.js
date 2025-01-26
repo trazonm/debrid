@@ -1,5 +1,4 @@
 const progressIntervals = {}; // Store intervals for each download ID
-
 fetch('/account/downloads')
     .then(response => response.json())
     .then(data => {
@@ -9,6 +8,7 @@ fetch('/account/downloads')
         data.forEach(download => {
             const row = document.createElement('tr');
             row.className = "downloads-table";
+
             row.innerHTML = `
                 <td>${download.id}</td>
                 <td>${download.filename}</td>

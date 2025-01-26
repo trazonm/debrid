@@ -56,10 +56,12 @@ const deleteDownloadById = async (userId, downloadId) => {
 
     const query = `
         UPDATE users
-        SET downloads = (
-            SELECT jsonb_agg(elem)
-            FROM jsonb_array_elements(downloads) elem
-            WHERE elem->>'id' != $2
+        SET downloads = COALESCE(
+            (
+                SELECT jsonb_agg(elem)
+                FROM jsonb_array_elements(downloads) elem
+                WHERE elem->>'id' != $2
+            ), '[]'::jsonb
         )
         WHERE username = $1;
     `;
