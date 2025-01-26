@@ -2,7 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const helmet = require('helmet');
-const nocache = require('nocache');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const cookieParser = require('cookie-parser'); // Add cookie-parser
@@ -57,7 +56,6 @@ app.use((req, res, next) => {
 // Global Middleware
 app.use(logIpGeolocation);
 app.use(restrictToUS);
-app.use(nocache());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser()); // Use cookie-parser
