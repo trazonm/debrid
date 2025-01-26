@@ -9,6 +9,7 @@ const { createUserTable } = require('./models/user');
 const app = express();
 const fs = require('fs');
 const sessionMiddleware = require('./middlewares/authMiddleware');
+const nocache = require('nocache');
 
 let isServerInitialized = false;
 
