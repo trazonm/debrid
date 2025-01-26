@@ -1,6 +1,6 @@
 {
   "name": "debrid-2.0",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "An easy way to search and download for torrents via real debrid.",
   "main": "app.js",
   "dependencies": {
