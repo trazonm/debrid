@@ -35,6 +35,9 @@ const searchRoutes = require('./routes/search');
 const accountRoutes = require('./routes/account');
 const downloadRoutes = require('./routes/downloads');
 
+// Import nocache middleware
+app.use(nocache());
+
 // Session configuration
 app.use(session({
     secret: process.env.SESSION_SECRET,
