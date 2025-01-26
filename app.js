@@ -63,9 +63,19 @@ app.use(cookieParser()); // Use cookie-parser
 // Use Helmet to apply the CSP policy
 app.use(helmet.contentSecurityPolicy(cspPolicy));
 app.use(express.static(path.join(__dirname, './')));
+
+// Serve sw.js with version query parameter
 app.use('/sw.js', (req, res) => {
-    res.sendFile(path.join(__dirname, 'sw.js')); // Adjust the path if it's in another folder
-  });
+    fs.readFile(path.join(__dirname, 'version.json'), 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error reading version.json:', err);
+            return res.status(500).json({ error: 'Internal Server Error' });
+        }
+        const version = JSON.parse(data).version;
+        res.sendFile(path.join(__dirname, `sw.js?v=${version}`));
+    });
+});
+
 // Routes
 app.use('/', indexRoutes);
 app.use('/iplog', sessionMiddleware, ipRoutes);
