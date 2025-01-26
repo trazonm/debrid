@@ -50,7 +50,7 @@ router.post('/login', async (req, res) => {
 router.post('/updateDownload', sessionMiddleware, async (req, res) => {
     const { id, filename, progress, link } = req.body;
     const user = await findUserByUsername(req.session.user);
-    const downloadIndex = user.downloads?.findIndex(download => download.id === id);
+    const downloadIndex = user.downloads.findIndex(download => download.id === id);
 
     if (downloadIndex !== -1) {
         user.downloads[downloadIndex] = { id, filename, progress, link };
