@@ -355,9 +355,9 @@ html {
   filter: invert(100%) brightness(100%);
   transition: filter 0.3s ease, filter 0.3s ease;
   max-height: 3vh;
-  min-width: 30px;
-  min-height: 30px;
-  padding: 5px;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 10px;
   cursor: pointer;
 }
 

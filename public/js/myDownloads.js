@@ -28,10 +28,33 @@ fetch('/account/downloads')
                 checkProgress(download.id); // Check progress immediately
             }
         });
+
+        // Add event listeners to the dynamically created download images
+        const downloadImages = document.querySelectorAll('.download-page-img');
+        const deleteButton = document.getElementById('download-page-delete');
+        const audio = new Audio('../public/assets/audio/hover.wav');
+
+        // Preload audio to avoid delays
+        audio.load();
+
+        downloadImages.forEach(img => {
+            img.addEventListener('click', () => {
+                audio.currentTime = 0;
+                audio.play().catch(err => console.error("Playback failed:", err));
+
+            });
+        });
+
+        deleteButton.addEventListener('click', () => {
+            audio.currentTime = 0;
+            audio.play().catch(err => console.error("Playback failed:", err));
+
+        });
     })
     .catch(error => {
         console.error('Error fetching downloads:', error);
     });
+
 
 function updateProgressCell(progressCell, progress) {
     progressCell.innerText = `${progress}%`;
@@ -45,6 +68,27 @@ function updateLinkCell(downloadLinkCell, downloadLink) {
         <img class="download-page-img" src="../public/assets/icons/copy.png" alt="Copy" onclick="copyToClipboard('${downloadLink}')">
         <img class="download-page-delete" src="../public/assets/icons/delete.png" alt="Delete" onclick="deleteDownload('${download.id}')">
     `;
+
+    // Add event listeners to the newly created elements
+    const downloadImages = downloadLinkCell.querySelectorAll('.download-page-img');
+    const deleteButton = downloadLinkCell.querySelectorAll('.download-page-img');
+    const audio = new Audio('../public/assets/audio/hover.wav');
+
+    // Preload audio to avoid delays
+    audio.load();
+
+    downloadImages.forEach(img => {
+        img.addEventListener('click', () => {
+            audio.currentTime = 0;
+            audio.play().catch(err => console.error("Playback failed:", err));
+        });
+    });
+
+    deleteButton.addEventListener('click', () => {
+        audio.currentTime = 0;
+        audio.play().catch(err => console.error("Playback failed:", err));
+
+    });
 }
 
 function deleteDownload(id) {

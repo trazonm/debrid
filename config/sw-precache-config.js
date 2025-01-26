@@ -5,6 +5,7 @@ module.exports = {
     'views/*.html',    // Cache all HTML files in /views
     'public/assets/styles.autoprefixed.css', // Cache the CSS file
     'public/js/*.js',  // Cache all JS files in /public/js
+    'public/assets/audio/*.wav', // Cache all audio files
   ],
   stripPrefix: '',
   runtimeCaching: [
@@ -13,12 +14,20 @@ module.exports = {
       handler: 'networkFirst',
     },
     {
-      urlPattern: /\/api\//, // Cache API requests
+      urlPattern: /\/torrents\//, // Cache torrent requests
+      handler: 'networkFirst',
+    },
+    {
+      urlPattern: /\/account\//, // Cache torrent requests
       handler: 'networkFirst',
     },
     {
       urlPattern: /\/views\//, // Cache dynamic requests for /views
       handler: 'networkFirst',
+    },
+    {
+      urlPattern: /\.(mp4|webm|ogg|mp3|wav|flac)$/, // Exclude video and audio files
+      handler: 'networkOnly', // Allow videos to load directly from the network
     },
   ],
   swFilePath: 'sw.js', // Generate service worker in the root directory
