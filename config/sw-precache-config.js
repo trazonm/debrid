@@ -1,3 +1,5 @@
+const version = require('./version.json').version || Date.now(); // Fallback to Date.now()
+
 module.exports = {
   staticFileGlobs: [
     'public/**',
@@ -5,7 +7,6 @@ module.exports = {
     'views/*.html',
     'public/assets/styles.autoprefixed.css',
     'public/js/*.js',
-    // Remove audio files from staticFileGlobs if their size is large
   ],
   staticFileGlobsIgnorePatterns: [
     /\.(mp4|webm|ogg|mp3|wav|flac)$/, // Exclude large media files
@@ -33,7 +34,7 @@ module.exports = {
       handler: 'networkOnly', // Prevent caching of media files
     },
   ],
-  swFilePath: `sw.js?v=${Date.now()}`,
+  swFilePath: `sw.js?v=${version}`, // Dynamically add versioning
   verbose: true,
   cacheId: 'debrid-app-cache',
   maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB
