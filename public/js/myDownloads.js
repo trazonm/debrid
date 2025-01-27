@@ -24,7 +24,7 @@ fetch('/account/downloads')
                 }
                 </td>`;
             tableBody.appendChild(row);
-        if (download.progress && !download.link && !download.filename === 'Invalid Torrent') {
+        if (!download.link && !download.filename === 'Invalid Torrent') {
                 checkProgress(download.id); // Check progress immediately
             }
         });
