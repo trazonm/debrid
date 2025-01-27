@@ -206,12 +206,12 @@ input:-webkit-autofill {
 
 .progress-text {
   display: inline-block;
-  max-width: 80px;
+  max-width: 40px;
   /* Adjust width based on the longest text */
   white-space: nowrap;
   /* Prevent text wrapping */
+  text-align: center;
 }
-
 /* Ip Logging */
 
 .log-entry td {

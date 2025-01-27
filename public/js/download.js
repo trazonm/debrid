@@ -12,7 +12,7 @@ export function generateLink(link, downloadCell) {
         downloadCell.appendChild(progressText);
     }
 
-    startLoadingAnimation(progressText);
+    startLoadingAnimation(progressText, 'Adding');
     preventPageUnload(true); // Prevent page unload
 
     (async () => {
@@ -21,9 +21,10 @@ export function generateLink(link, downloadCell) {
             id = await handleLink(link);
         } catch (error) {
             console.error('Error:', error);
-            alert('An error occurred while generating the link.');
-            if (downloadButton) downloadButton.style.display = 'block';
+            // alert('An error occurred while generating the link.');
+            // if (downloadButton) downloadButton.style.display = 'block';
             stopLoadingAnimation(progressText);
+            finalizeDownload(id, 'Invalid Torrent', 'Invalid Torrent', downloadCell);
             preventPageUnload(false); // Allow page unload
             return;
         }
@@ -32,12 +33,14 @@ export function generateLink(link, downloadCell) {
     })();
 }
 
-function startLoadingAnimation(progressText) {
+function startLoadingAnimation(progressText, baseText) {
     let dotCount = 0;
     const loadingInterval = setInterval(() => {
         dotCount = (dotCount + 1) % 4;
-        progressText.innerText = `Adding${'.'.repeat(dotCount)}`;
+        progressText.innerText = `${baseText}${'.'.repeat(dotCount)}`;
     }, 500);
+
+    // Attach the interval to the element so it can be stopped later
     progressText.loadingInterval = loadingInterval;
 }
 
@@ -110,7 +113,8 @@ async function addTorrent(redirectUrl, link) {
 
 export function checkProgress(id, progressText, downloadCell) {
     stopLoadingAnimation(progressText);
-    progressText.innerText = `Almost there...`;
+    progressText.innerText = 'Almost there';
+    startLoadingAnimation(progressText, 'Almost there');
     if (id != undefined) {
         const interval = setInterval(() => {
             fetch(`/torrents/checkProgress/${id}`)
@@ -122,6 +126,7 @@ export function checkProgress(id, progressText, downloadCell) {
                     }
                     updateDownloadProgress(id, data.filename, progress)
                         .then(() => {
+                            stopLoadingAnimation(progressText);
                             progressText.innerText = `Progress: ${progress}%`;
                             if (progress >= 100) {
                                 clearInterval(interval);
@@ -136,7 +141,7 @@ export function checkProgress(id, progressText, downloadCell) {
                 });
         }, 2000);
     } else {
-        finalizeDownload('Invalid Torrent', downloadCell);
+        finalizeDownload(id, 'Invalid Torrent', 'Invalid Torrent', downloadCell);
         preventPageUnload(false); // Allow page unload for invalid torrent
     }
 }
@@ -194,11 +199,10 @@ export function finalizeDownload(id, filename, downloadLink, downloadCell) {
             });
     } else {
         const downloadButton = document.createElement('button');
-        downloadButton.className = 'btn btn-outline-danger';
+        downloadButton.className = 'btn btn-danger';
         downloadButton.textContent = 'Invalid Torrent';
         downloadButton.onclick = () => { };
         downloadCell.innerHTML = '';
         downloadCell.appendChild(downloadButton);
-        updateDownloadProgress(id, 'Invalid Torrent', 0);
     }
 }
