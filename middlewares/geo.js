@@ -2,6 +2,7 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
+const { logIp } = require('../models/iplog'); // Import logIp function
 
 const logFilePath = path.join(__dirname, '../logs/iplog.json');
 const MAX_LOG_ENTRIES = 100;
@@ -22,38 +23,23 @@ const logIpGeolocation = async (req, res, next) => {
         clientIp = 'localhost';
     }
 
-    if (isPrivateIp(clientIp)) {
-        // console.log('Private or localhost IP detected, skipping geolocation.');
-        return next();
-    }
+    // if (isPrivateIp(clientIp)) {
+    //     return next();
+    // }
 
     try {
         const response = await axios.get(`https://ipinfo.io/${clientIp}?token=${process.env.IP_INFO_TOKEN}`);
         const location = response.data;
 
-        // Read existing log or initialize
-        const log = fs.existsSync(logFilePath) ? JSON.parse(fs.readFileSync(logFilePath, 'utf-8')) : [];
-
         // Create log entry
         const logEntry = {
             ip: clientIp,
             location: location.city ? `${location.city}, ${location.region}, ${location.country} ${location.postal}` : 'Unknown location',
-            timestamp: new Date().toISOString(),
         };
 
-        // Update log with unique IPs only
-        if (!log.some(entry => entry.ip === clientIp)) {
-            log.unshift(logEntry);
-
-            // Keep only the last MAX_LOG_ENTRIES entries
-            if (log.length > MAX_LOG_ENTRIES) {
-                log.pop();
-            }
-
-            // Write the updated log to the file
-            fs.writeFileSync(logFilePath, JSON.stringify(log, null, 2), 'utf-8');
-            console.log(`Logged IP ${clientIp} to the file.`);
-        }
+        // Log the IP to the database
+        await logIp(logEntry.ip, logEntry.location);
+        console.log(`Logged IP ${clientIp} to the database.`);
     } catch (error) {
         console.error(`Failed to fetch geolocation for IP ${clientIp}`, error.message);
     }

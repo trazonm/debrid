@@ -1,13 +1,37 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const { Pool } = require('pg'); // PostgreSQL client
+require('dotenv').config();
 
 const router = express.Router();
-const logFilePath = path.join(__dirname, '../logs/iplog.json');
 
-router.get('/', (req, res) => {
-    if (fs.existsSync(logFilePath)) {
-        const log = JSON.parse(fs.readFileSync(logFilePath, 'utf-8'));
+const pool = new Pool({
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASSWORD,
+    port: process.env.DB_PORT,
+});
+
+// Middleware to restrict access to bakaboi341
+const restrictToBakaboi341 = (req, res, next) => {
+    const username = req.session.user; // Assuming username is stored in session
+    if (username === 'bakaboi341') {
+        return next();
+    } else {
+        return res.status(403).send('Access denied.');
+    }
+};
+
+router.use(restrictToBakaboi341); // Apply the middleware to all routes in this router
+
+router.get('/', async (req, res) => {
+    try {
+        const client = await pool.connect();
+        const result = await client.query('SELECT ip, location, timestamp FROM iplog');
+        const log = result.rows;
+
         const formattedLogEntries = log.map(entry => ({
             ip: entry.ip,
             location: entry.location,
@@ -34,8 +58,11 @@ router.get('/', (req, res) => {
 
         const updatedHtml = htmlTemplate.replace('<!-- LOG_ENTRIES -->', tableRows);
         res.send(updatedHtml);
-    } else {
-        res.status(404).send('Log file not found.');
+
+        client.release();
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Error retrieving log entries.');
     }
 });
 

@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const cookieParser = require('cookie-parser'); // Add cookie-parser
 const { createUserTable } = require('./models/user');
+const { createIpTable } = require('./models/iplog'); // Import createTable function
 const app = express();
 const fs = require('fs');
 const sessionMiddleware = require('./middlewares/authMiddleware');
@@ -13,14 +14,14 @@ const nocache = require('nocache');
 
 let isServerInitialized = false;
 
-
-
 // Initialize database
 createUserTable().then(() => {
     console.log('User table created');
 }).catch(err => {
     console.error('Error creating user table', err);
 });
+
+createIpTable(); // Ensure the iplog table is created
 
 // Config imports
 const cspPolicy = require('./config/cspPolicy');
@@ -89,7 +90,7 @@ app.get('/sw.js', (req, res) => {
         console.log('Service Worker file path:', swFilePath);
         
         // Ensure the versioned service worker file exists and serve it
-        fs.exists(swFilePath, exists => {
+        fs.existsSync(swFilePath, exists => {
             if (exists) {
                 res.sendFile(swFilePath);
             } else {
