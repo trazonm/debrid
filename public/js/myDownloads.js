@@ -24,7 +24,7 @@ fetch('/account/downloads')
                 }
                 </td>`;
             tableBody.appendChild(row);
-        if ((!download.link && !download.filename == 'Invalid Torrent') || download.progress < 100) {
+        if (!download.link || download.progress < 100) {
                 checkProgress(download.id); // Check progress immediately
                 console.log('Checking progress for download:', download.id);
             }
