@@ -23,9 +23,9 @@ const logIpGeolocation = async (req, res, next) => {
         clientIp = 'localhost';
     }
 
-    // if (isPrivateIp(clientIp)) {
-    //     return next();
-    // }
+    if (isPrivateIp(clientIp)) {
+        return next();
+    }
 
     try {
         const response = await axios.get(`https://ipinfo.io/${clientIp}?token=${process.env.IP_INFO_TOKEN}`);
