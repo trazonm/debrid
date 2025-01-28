@@ -1,95 +1,121 @@
 // main.js
 import { sendSearchRequest } from './search.js';
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    // Fetch version from version.json or generate it dynamically
-    fetch('/version.json')
-      .then(response => response.json())
-      .then(data => {
-        const version = data.version || Date.now(); // Fallback to Date.now() if version is not found
+registerServiceWorker();
 
-        // Register the versioned sw.js file
-        navigator.serviceWorker.register(`/sw-${version}.js`)
-          .then(registration => {
-            console.log('Service Worker registered with scope:', registration.scope);
 
-            if (registration.waiting) {
-              console.log('New service worker is waiting to activate.');
-              notifyUpdateReady(registration.waiting);
-            }
+function registerServiceWorker() {
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      fetch('/version.json')
+        .then(response => response.json())
+        .then(data => {
+          const version = data.version;
+          const swFile = version ? `/sw-${version}.js` : '/sw.js'; // Default fallback if no version is specified
 
-            registration.addEventListener('updatefound', () => {
-              const newWorker = registration.installing;
-              console.log('A new service worker is being installed.');
+          navigator.serviceWorker.register(swFile)
+            .then(registration => {
+              console.log('Service Worker registered with scope:', registration.scope);
 
-              newWorker.addEventListener('statechange', () => {
-                if (newWorker.state === 'installed') {
-                  if (navigator.serviceWorker.controller) {
-                    console.log('New service worker installed and waiting to activate.');
-                    notifyUpdateReady(newWorker);
-                  } else {
-                    console.log('Service Worker installed for the first time.');
+              // Check if a new service worker is waiting to activate
+              if (registration.waiting) {
+                notifyUpdateReady(registration.waiting);
+              }
+
+              // Listen for an update being found
+              registration.addEventListener('updatefound', () => {
+                const newWorker = registration.installing;
+                console.log('A new service worker is being installed.');
+
+                newWorker.addEventListener('statechange', () => {
+                  if (newWorker.state === 'installed') {
+                    if (navigator.serviceWorker.controller) {
+                      console.log('New service worker installed and waiting.');
+                      notifyUpdateReady(newWorker);
+                    } else {
+                      console.log('Service Worker installed for the first time.');
+                    }
                   }
-                }
+                });
               });
+            })
+            .catch(error => {
+              console.error('Service Worker registration failed:', error);
             });
-          })
-          .catch(error => {
-            console.error('Service Worker registration failed:', error);
-          });
 
-        // Listen for controller changes
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-          console.log('Controller changed. Reloading the page...');
-          window.location.reload();
+          // Listen for changes to the active service worker
+          navigator.serviceWorker.addEventListener('controllerchange', () => {
+            console.log('Service Worker controller changed.');
+            // Optionally reload or notify the user here
+            // window.location.reload();
+          });
+        })
+        .catch(error => {
+          console.error('Failed to fetch version info:', error);
         });
-      })
-      .catch(error => {
-        console.error('Error fetching version info:', error);
-      });
+    });
+  }
+}
+
+// Helper function to notify and activate the new service worker
+function notifyUpdateReady(worker) {
+  console.log('A new version is available.');
+
+  // Create a Bootstrap alert for the update notification
+  const updateNotification = document.createElement('div');
+  updateNotification.classList.add('alert', 'alert-info', 'fixed-bottom', 'm-3', 'd-flex', 'justify-content-between', 'align-items-center');
+  updateNotification.style.position = 'fixed';
+  updateNotification.style.left = '10px';
+  updateNotification.style.bottom = '10px';
+  updateNotification.style.zIndex = '1050';  // Ensure it is on top of other content
+
+  updateNotification.innerHTML = `
+    <span>New version available.</span>
+    <button id="update-btn" class="btn btn-sm btn-primary ml-3">Reload</button>
+  `;
+
+  document.body.appendChild(updateNotification);
+
+  // Add click listener to the "Reload" button
+  document.getElementById('update-btn').addEventListener('click', () => {
+    worker.postMessage({ action: 'skipWaiting' }); // Tell the worker to activate immediately
+  });
+
+  // Listen for the service worker activation
+  worker.addEventListener('statechange', () => {
+    if (worker.state === 'activated') {
+      window.location.reload(); // Reload the page once the new service worker is activated
+    }
   });
 }
 
 
-// Helper function to notify and activate the new service worker
-function notifyUpdateReady(worker) {
-  // Optionally, show a UI to the user for updates (not mandatory for auto-reloading)
-  console.log('A new version is available. Activating now...');
-  worker.postMessage({ action: 'skipWaiting' });
-}
-
-
-function getCookie(name) {
-  let cookieArr = document.cookie.split(";");
-  for (let i = 0; i < cookieArr.length; i++) {
-    let cookiePair = cookieArr[i].split("=");
-    if (name == cookiePair[0].trim()) {
-      return decodeURIComponent(cookiePair[1]);
-    }
-  }
-  return null;
-}
-
-const isLoggedIn = getCookie('isLoggedIn') || 'false';
 
 document.addEventListener("DOMContentLoaded", function () {
-  if (isLoggedIn === 'true') {
-    document.getElementById('auth-link').style.visibility = 'hidden';
-    document.getElementById('search-section').style.visibility = 'visible'; // Show the search section = 'inline-block';
-    document.getElementById('navbar').style.display = 'block'; // Show the navbar
+  fetch('/account/session', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.isLoggedIn === true) {
+        console.log('User is logged in');
+        document.getElementById('auth-link').style.visibility = 'hidden';
+        document.getElementById('search-section').style.visibility = 'visible'; // Show the search section = 'inline-block';
+        document.getElementById('navbar').style.display = 'block'; // Show the navbar
 
-    // Add fade-in effect
-    document.getElementById('search-section').classList.add('fade-in');
-    document.getElementById('navbar').classList.add('fade-in');
-
-  } else {
-    document.getElementById('auth-link').style.visibility = 'visible';
-    document.getElementById('search-section').style.visibility = 'hidden';
-    document.getElementById('navbar').style.display = 'none'; // Hide the navbar
-
-    document.getElementById('auth-link').classList.add('fade-in');
-  }
+      } else {
+        console.log('User is not logged in');
+        document.getElementById('auth-link').style.visibility = 'visible';
+        document.getElementById('search-section').style.visibility = 'hidden';
+        document.getElementById('navbar').style.display = 'none'; // Hide the navbar
+      }
+    })
+    .catch(error => {
+      console.error('Error checking login status:', error);
+    });
 });
 
 // CSS class to trigger the fade-in

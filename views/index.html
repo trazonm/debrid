@@ -17,7 +17,7 @@
 </head>
 
 <body class="bg-black" onload="getUser()">
-    <nav id="navbar" class="navbar fixed-top" style="display: none;">
+    <nav id="navbar" class="navbar fixed-top fade-in" style="display: none;">
         <div class="container-fluid">
             <a class="navbar-brand" href="#"></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
@@ -74,11 +74,11 @@
 			</div> -->
             <div class="col d-flex flex-column align-items-center justify-content-center">
                 <h1 id="debrid">BakaWorld</h1>
-                <div id="auth-link" style="visibility: none;">
+                <div id="auth-link" class="fade-in" style="visibility: none;">
                     <button id="auth-button" class="btn btn-outline-danger" data-bs-toggle="modal"
                         data-bs-target="#authModal">Login / Sign Up</button>
                 </div>
-                <div id="search-section" class="input-group input-group-sm mb-3" style="visibility: none;">
+                <div id="search-section" class="input-group input-group-sm mb-3 fade-in" style="visibility: none;">
                     <input type="text" id="searchInput" class="form-control" required placeholder="Search the BakaNet"
                         aria-label="Search input" aria-describedby="search-button">
                     <button class="btn btn-outline-danger" type="button" id="search-button"
@@ -155,8 +155,7 @@
                                     <input type="password" id="login-password" class="form-control auth-input"
                                         placeholder="Password" required minlength="8">
                                 </div>
-                                <button id="login-button" type="submit"
-                                    class="g-recaptcha btn btn-dark w-100 mt-5"
+                                <button id="login-button" type="submit" class="g-recaptcha btn btn-dark w-100 mt-5"
                                     data-sitekey="6Ld28b4qAAAAAJc8GkewxXC09ilz_W1zThUhwxoz" data-callback="login"
                                     data-action="submit">
                                     Login
@@ -177,13 +176,30 @@
                             <form">
                                 <div class="mb-3">
                                     <label for="signup-username" class="form-label">Username</label>
-                                    <input type="text" id="signup-username" class="form-control auth-input"
-                                        placeholder="Username">
+                                    <div class="input-group">
+                                        <input type="text" id="signup-username" class="form-control auth-input"
+                                            placeholder="Username">
+                                    </div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="signup-password" class="form-label">Password</label>
-                                    <input type="password" id="signup-password" class="form-control auth-input"
-                                        placeholder="Password" minlength="8">
+                                    <div class="input-group">
+                                        <input type="password" id="signup-password" class="form-control auth-input"
+                                            placeholder="Password" minlength="8">
+                                        <button type="button" class="btn btn-outline-secondary"
+                                            id="toggle-signup-password"
+                                            onclick="togglePasswordVisibility('signup-password', 'toggle-signup-password')">Show</button>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="confirm-password" class="form-label">Confirm Password</label>
+                                    <div class="input-group">
+                                        <input type="password" id="confirm-password" class="form-control auth-input"
+                                            placeholder="Confirm Password" minlength="8">
+                                        <button type="button" class="btn btn-outline-secondary"
+                                            id="toggle-confirm-password"
+                                            onclick="togglePasswordVisibility('confirm-password', 'toggle-confirm-password')">Show</button>
+                                    </div>
                                 </div>
                                 <button type="button" class="btn btn-dark w-100 mt-5" onclick="signup()">Sign
                                     Up</button>
@@ -205,8 +221,6 @@
         </div>
     </div>
     </div>
-
-
 
     <!-- Modal -->
     <div class="modal fade text-center" id="resultsModal" tabindex="-1" aria-labelledby="resultsModalLabel"

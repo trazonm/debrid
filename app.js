@@ -11,17 +11,19 @@ const app = express();
 const fs = require('fs');
 const sessionMiddleware = require('./middlewares/authMiddleware');
 const nocache = require('nocache');
+const PgSession = require("connect-pg-simple")(session);
+const { Pool } = require('pg');
 
-let isServerInitialized = false;
-
-// Initialize database
-createUserTable().then(() => {
-    console.log('User table created');
-}).catch(err => {
-    console.error('Error creating user table', err);
-});
-
-createIpTable(); // Ensure the iplog table is created
+// Initialize database tables
+createUserTable(); 
+createIpTable();
+const pool = new Pool({
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASSWORD,
+    port: process.env.DB_PORT,
+  });
 
 // Config imports
 const cspPolicy = require('./config/cspPolicy');
@@ -42,23 +44,21 @@ app.use(nocache());
 
 // Session configuration
 app.use(session({
+    store: new PgSession({
+        pool, // Reuse the Postgres connection pool
+        tableName: "session", // Name of the table for session data
+        createTableIfMissing: true, // Automatically create the session table if it doesn't exist
+      }),
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
-        secure: false, // Set to true if using HTTPS
+        secure: process.env.NODE_ENV === "production", // Secure cookies only in production
         maxAge: 24 * 60 * 60 * 1000 // Session lasts for 24 hours
     }
 }));
 
-// Middleware to set isLoggedIn cookie to false on server restart
-app.use((req, res, next) => {
-    if (!isServerInitialized) {
-        res.cookie('isLoggedIn', 'false', { path: '/', sameSite: 'Lax' });
-        isServerInitialized = true;
-    }
-    next();
-});
+console.log('Production environment?', process.env.NODE_ENV === 'production');
 
 // Global Middleware
 app.use(logIpGeolocation);

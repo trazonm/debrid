@@ -4,6 +4,8 @@ FROM node:18
 # Set the working directory
 WORKDIR /app
 
+ENV NODE_ENV=production
+
 # Copy package files and install dependencies
 COPY package*.json ./
 RUN npm install

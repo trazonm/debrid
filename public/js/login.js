@@ -60,6 +60,28 @@ function login(token) {
         .catch(error => console.error('Error:', error));
 }
 
+function togglePasswordVisibility(inputId, toggleButtonId) {
+    const passwordInput = document.getElementById(inputId);
+    const toggleButton = document.getElementById(toggleButtonId);
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleButton.innerHTML = 'Hide';
+    } else {
+        passwordInput.type = 'password';
+        toggleButton.innerHTML = 'Show';
+    }
+}
+
+function checkPasswordsMatch() {
+    const password = document.getElementById('signup-password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+    if (password !== confirmPassword) {
+        toastBody.innerHTML = 'Passwords do not match.';
+        errorToast.show();
+        return false;
+    }
+    return true;
+}
 
 function signup() {
     const username = document.getElementById('signup-username').value.trim().toLowerCase();
@@ -74,6 +96,10 @@ function signup() {
     if (password.length < 8) {
         toastBody.innerHTML = 'Password must be at least 8 characters long.';
         errorToast.show();
+        return;
+    }
+
+    if (!checkPasswordsMatch()) {
         return;
     }
 

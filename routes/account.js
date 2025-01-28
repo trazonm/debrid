@@ -83,6 +83,7 @@ router.post('/logout', (req, res) => {
         if (err) {
             return res.status(500).json({ success: false, message: 'Failed to logout' });
         }
+        res.clearCookie("connect.sid"); // Clear session cookie
         res.cookie('isLoggedIn', '', {
             path: '/',
             sameSite: 'Lax',
@@ -91,5 +92,13 @@ router.post('/logout', (req, res) => {
         res.json({ success: true });
     });
 });
+
+router.get('/session', (req, res) => {
+    if (req.session && req.session.user) {
+      res.json({ isLoggedIn: true, user: req.session.user });
+    } else {
+      res.json({ isLoggedIn: false });
+    }
+  });
 
 module.exports = router;
