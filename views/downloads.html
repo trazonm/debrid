@@ -19,7 +19,7 @@
 
 <body id="downloadsBody">
     <video autoplay muted loop playsinline preload="auto" class="video-background">
-        <source src="../public/assets/background.mp4" type="video/mp4">
+        <source src="../public/assets/background.mp4" type="video/mp4" codecs=hvc1>
         Your browser does not support the video tag.
     </video>
     <nav class="navbar fixed-top">
@@ -52,7 +52,7 @@
         </div>
     </nav>
     <h1 class="text-center my-4" id="downloadsHeader"><span>Downloads</span></h1>
-    <div id="downloadsTableContainer" class="table-responsive container my-4">
+    <div id="downloadsTableContainer" class="table-responsive container my-4 fade-in">
         <table class="table table-hover" id="downloadsTable">
             <thead>
                 <tr id="downloads-header">

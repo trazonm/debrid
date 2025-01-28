@@ -1,10 +1,6 @@
 import { formatSize } from './ui.js';
-
-document.addEventListener("DOMContentLoaded", function () {
-    getUser();
-  });  
-
 const progressIntervals = {}; // Store intervals for each download ID
+
 fetch('/account/downloads')
     .then(response => response.json())
     .then(data => {
@@ -68,6 +64,21 @@ fetch('/account/downloads')
     .catch(error => {
         console.error('Error fetching downloads:', error);
     });
+
+document.addEventListener("DOMContentLoaded", function () {
+    const username = localStorage.getItem('username');
+    document.getElementById('offcanvasNavbarLabel').innerHTML = 'Welcome, ' + username + '!';
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    setTimeout(() => {
+      const elements = document.querySelectorAll('.fade-in');
+      elements.forEach(el => {
+        el.style.opacity = 1; // Trigger the fade-in
+      });
+    }, 0); // Delay to allow display changes to take effect
+  });
+  
 
 function updateProgressCell(progressCell, progress) {
     progressCell.innerText = `${progress}`;

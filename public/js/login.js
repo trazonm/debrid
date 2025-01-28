@@ -149,8 +149,3 @@ document.getElementById('logout-button').addEventListener('click', function () {
             }
         });
 });
-
-function getUser() {
-    const username = localStorage.getItem('username');
-    document.getElementById('offcanvasNavbarLabel').innerHTML = 'Welcome, ' + username + '!';
-}
