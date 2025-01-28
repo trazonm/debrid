@@ -36,11 +36,6 @@ router.post('/login', async (req, res) => {
     const user = await findUserByUsername(username);
     if (user && await bcrypt.compare(password, user.password)) { // Compare hashed passwords
         req.session.user = username;
-        res.cookie('isLoggedIn', 'true', {
-            path: '/',
-            sameSite: 'Lax',
-            maxAge: 24 * 60 * 60 * 1000 // 24 hours in milliseconds
-        });
         res.json({ success: true });
     } else {
         res.status(401).json({ success: false });
@@ -84,11 +79,6 @@ router.post('/logout', (req, res) => {
             return res.status(500).json({ success: false, message: 'Failed to logout' });
         }
         res.clearCookie("connect.sid"); // Clear session cookie
-        res.cookie('isLoggedIn', '', {
-            path: '/',
-            sameSite: 'Lax',
-            maxAge: 0 // Clears the cookie immediately
-        });
         res.json({ success: true });
     });
 });
