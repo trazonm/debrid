@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 Page - Not Found</title>
     <link rel="icon" type="image/jpeg" href="/public/assets/favicon.jpg">
-    <link rel="stylesheet" href="/public/assets/404.autoprefixed.css" type="text/css">
+    <link rel="stylesheet" href="/public/assets/404.autoprefixed.css" type="text/css" nonce="<%= styleNonce %>">
 </head>
 
 <body>
@@ -16,18 +16,23 @@
             Oops! The page you're looking for could not be found.
         </div>
         <div id="buttons" class="buttons">
-            <button class="go-home-button" onclick="goHome()">Go Home</button>
-            <button class="play-game-button" id="playGame" onclick="playGame()">Play Game</button>
+            <button class="go-home-button">Go Home</button>
+            <button class="play-game-button" id="playGame">Play Game</button>
         </div>
-        <iframe id="gameIframe" src="https://jcw87.github.io/c2-sans-fight/" style="display: none;"
+        <iframe id="gameIframe" src="https://jcw87.github.io/c2-sans-fight/"
             tabindex="0"></iframe>
     </div>
 
-    <script>
+    <script nonce="<%= scriptNonce %>">
         function goHome() {
             // Redirect to homepage ('/')
             window.location.href = '/';
         }
+
+        const goHomeButton = document.querySelectorAll('.go-home-button')[0];
+        const playGameButton = document.querySelectorAll('.play-game-button')[0];
+        goHomeButton.addEventListener('click', goHome);
+        playGameButton.addEventListener('click', playGame);
 
         function playGame() {
             // Hide the message and buttons, show the game iframe
@@ -39,7 +44,7 @@
             document.getElementById('particleCanvas').style.display = 'none';
         }
     </script>
-    <script src="../public/js/particleBackground.js"></script> <!-- New particle script -->
+    <script src="../public/js/particleBackground.js" nonce="<%= scriptNonce %>"></script> <!-- New particle script -->
 </body>
 
 </html>

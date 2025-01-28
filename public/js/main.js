@@ -89,8 +89,6 @@ function notifyUpdateReady(worker) {
   });
 }
 
-
-
 document.addEventListener("DOMContentLoaded", function () {
   fetch('/account/session', {
     method: 'GET',
@@ -128,6 +126,10 @@ document.addEventListener("DOMContentLoaded", function () {
   }, 0); // Delay to allow display changes to take effect
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+  getUser();
+});
+
 document.getElementById('search-button').addEventListener('click', sendSearchRequest);
 document.getElementById('searchInput').addEventListener('keypress', function (event) {
   if (event.key === 'Enter') {
@@ -148,6 +150,18 @@ document.getElementById('signup-form').addEventListener('keypress', function (ev
     event.preventDefault(); // Prevents the default form submission if inside a form
     document.getElementById('signup-button').click(); // Triggers the search button click
   }
+});
+
+document.getElementById('toggle-signup-password').addEventListener('click', function() {
+    togglePasswordVisibility('signup-password', 'toggle-signup-password');
+});
+
+document.getElementById('toggle-confirm-password').addEventListener('click', function() {
+    togglePasswordVisibility('confirm-password', 'toggle-confirm-password');
+});
+
+document.getElementById('signup-button').addEventListener('click', function() {
+    signup();
 });
 
 

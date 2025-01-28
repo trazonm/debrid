@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IP Log</title>
     <link rel="icon" type="image/jpeg" href="/public/assets/favicon.jpg">
-    <link href="https://fonts.cdnfonts.com/css/anime-ace" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/anime-ace" rel="stylesheet" nonce="<%= styleNonce %>">
 
-	<link href="/public/assets/styles.autoprefixed.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/public/assets/styles.autoprefixed.css" rel="stylesheet" nonce="<%= styleNonce %>">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" nonce="<%= styleNonce %>">
 </head>
 <body class="bg-black bg-gradient">
-    <div class="table-responsive container my-4"  style="max-height: 100vh;">
+    <div id="ipTableContainer" class="table-responsive container my-4">
         <h1 class="text-center" id="ipLogHeader">Last 100 Unique Visitors</h1>
         <table class="table table-striped">
             <thead>
@@ -26,7 +26,7 @@
             </tbody>
         </table>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" nonce="<%= scriptNonce %>"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" nonce="<%= scriptNonce %>"></script>
 </body>
 </html>

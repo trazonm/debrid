@@ -1,3 +1,9 @@
+import { formatSize } from './ui.js';
+
+document.addEventListener("DOMContentLoaded", function () {
+    getUser();
+  });  
+
 const progressIntervals = {}; // Store intervals for each download ID
 fetch('/account/downloads')
     .then(response => response.json())
@@ -12,45 +18,50 @@ fetch('/account/downloads')
             row.innerHTML = `
                 <td>${download.id}</td>
                 <td>${download.filename}</td>
+                <td id="speed-${download.id}">Not Downloading</td>
                 <td id="progress-${download.id}">${download.progress}%</td>
+                <td id="seeders-${download.id}">Not Downloading</td>
                 <td id="download-link">
                     ${download.progress === 100 && download.link ? `
                         <a href="${download.link}" target="_blank">
                             <img class="download-page-img" src="../public/assets/icons/download.png" alt="Download">
                         </a>
-                        <img class="download-page-img" src="../public/assets/icons/copy.png" alt="Copy" onclick="copyToClipboard('${download.link}')">
-                        <img class="download-page-delete" src="../public/assets/icons/delete.png" alt="Delete" onclick="deleteDownload('${download.id}')">
-                        ` : `<img class="download-page-delete" src="../public/assets/icons/delete.png" alt="Delete" onclick="deleteDownload('${download.id}')">`
+                        <img class="download-page-img copy-icon" src="../public/assets/icons/copy.png" alt="Copy">
+                        <img class="download-page-delete delete-icon" src="../public/assets/icons/delete.png" alt="Delete">
+                        ` : `<img class="download-page-delete delete-icon" src="../public/assets/icons/delete.png" alt="Delete">`
                 }
                 </td>`;
             tableBody.appendChild(row);
-        if (!download.link || download.progress < 100) {
+
+            if (!download.link || download.progress < 100) {
                 checkProgress(download.id); // Check progress immediately
                 console.log('Checking progress for download:', download.id);
             }
         });
 
-        // Add event listeners to the dynamically created download images
-        const downloadImages = document.querySelectorAll('.download-page-img');
-        const deleteButton = document.querySelectorAll('.download-page-delete');
+        // Add event listeners to the dynamically created elements
+        const copyIcons = document.querySelectorAll('.copy-icon');
+        const deleteIcons = document.querySelectorAll('.delete-icon');
         const audio = new Audio('../public/assets/audio/hover.wav');
 
         // Preload audio to avoid delays
         audio.load();
 
-        downloadImages.forEach(img => {
-            img.addEventListener('click', () => {
+        copyIcons.forEach(icon => {
+            icon.addEventListener('click', (event) => {
+                const link = event.target.closest('td').querySelector('a').href;
+                copyToClipboard(link);
                 audio.currentTime = 0;
                 audio.play().catch(err => console.error("Playback failed:", err));
-
             });
         });
 
-        deleteButton.forEach(img => {
-            img.addEventListener('click', () => {
+        deleteIcons.forEach(icon => {
+            icon.addEventListener('click', (event) => {
+                const id = event.target.closest('tr').querySelector('td:first-child').textContent.trim();
+                deleteDownload(id);
                 audio.currentTime = 0;
                 audio.play().catch(err => console.error("Playback failed:", err));
-
             });
         });
     })
@@ -58,37 +69,49 @@ fetch('/account/downloads')
         console.error('Error fetching downloads:', error);
     });
 
-
 function updateProgressCell(progressCell, progress) {
-    progressCell.innerText = `${progress}%`;
+    progressCell.innerText = `${progress}`;
 }
+
+function updateSeedersCell(seedersCell, seeders) {
+    seedersCell.innerText = `${seeders}`;
+}
+
+function updateSpeedCell(speedCell, speed) {
+    speedCell.innerText = `${speed}/s`;
+}
+
 
 function updateLinkCell(downloadLinkCell, downloadLink) {
     downloadLinkCell.innerHTML = `
-        <a href="${downloadLink}" target="_blank">
+        <a href="${downloadLink}" id="updatedLink" target="_blank">
             <img class="download-page-img" src="../public/assets/icons/download.png" alt="Download">
         </a>
-        <img class="download-page-img" src="../public/assets/icons/copy.png" alt="Copy" onclick="copyToClipboard('${downloadLink}')">
-        <img class="download-page-delete" src="../public/assets/icons/delete.png" alt="Delete" onclick="deleteDownload('${downloadLinkCell.parentElement.firstElementChild.textContent}')">
+        <img class="download-page-img copy-icon" src="../public/assets/icons/copy.png" alt="Copy">
+        <img class="download-page-delete delete-icon" src="../public/assets/icons/delete.png" alt="Delete">
     `;
 
     // Add event listeners to the newly created elements
-    const downloadImages = downloadLinkCell.querySelectorAll('.download-page-img');
-    const deleteButton = downloadLinkCell.querySelectorAll('.download-page-delete');
+    const copyIcons = downloadLinkCell.querySelectorAll('.copy-icon');
+    const deleteIcons = downloadLinkCell.querySelectorAll('.delete-icon');
     const audio = new Audio('../public/assets/audio/hover.wav');
 
     // Preload audio to avoid delays
     audio.load();
 
-    downloadImages.forEach(img => {
-        img.addEventListener('click', () => {
+    copyIcons.forEach(icon => {
+        icon.addEventListener('click', (event) => {
+            const link = event.target.closest('td').querySelector('a').href;
+            copyToClipboard(link);
             audio.currentTime = 0;
             audio.play().catch(err => console.error("Playback failed:", err));
         });
     });
 
-    deleteButton.forEach(img => {
-        img.addEventListener('click', () => {
+    deleteIcons.forEach(icon => {
+        icon.addEventListener('click', (event) => {
+            const id = event.target.closest('tr').querySelector('td:first-child').textContent.trim();
+            deleteDownload(id);
             audio.currentTime = 0;
             audio.play().catch(err => console.error("Playback failed:", err));
         });
@@ -180,16 +203,24 @@ function checkProgress(id) {
         fetch(`/torrents/checkProgress/${id}`)
             .then(response => response.json())
             .then(data => {
+                const seedersCell = document.getElementById(`seeders-${id}`);
                 const progressCell = document.getElementById(`progress-${id}`);
+                const speedCell = document.getElementById(`speed-${id}`);
                 if (progressCell) {
-                    updateProgressCell(progressCell, data.progress);
-                    const linkCell = progressCell.nextElementSibling;
+                    updateProgressCell(progressCell, `${data.progress}%`);
+                    updateSeedersCell(seedersCell, data.seeders || '0');
+                    updateSpeedCell(speedCell, formatSize(data.speed) || '0 MB/s');
+                    if (data.status !== 'downloading' && data.status !== 'downloaded') {
+                        updateProgressCell(progressCell, data.status);
+                    }
+                    const linkCell = progressCell.nextElementSibling.nextElementSibling;
                     if (data.progress >= 100 && data.links.length > 0) {
                         clearInterval(interval);
                         fetch(`/torrents/unrestrict?link=${encodeURIComponent(data.links[0])}`)
                             .then(response => response.json())
                             .then(unrestrictedData => {
                                 updateLinkCell(linkCell, unrestrictedData.download);
+                                updateProgressCell(progressCell, data.progress);
                                 sendProgressUpdate(id, data.filename, data.progress, unrestrictedData.download);
                             });
                     }

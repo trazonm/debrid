@@ -169,6 +169,7 @@ input:-webkit-autofill {
 
 #loadingSpinner {
   display: block;
+  visibility: hidden;
 }
 
 @media (max-width: 576px) {
@@ -192,16 +193,24 @@ input:-webkit-autofill {
 }
 
 .input-group {
-  max-width: 60vw;
-  padding-bottom: 20px; /* Reduced padding */
+  max-width: 100vw;
+  padding-bottom: 20px;
+  /* Reduced padding */
+}
+
+#toggle-signup-password,
+#toggle-confirm-password {
+  width: 20%;
 }
 
 #signup-form .mb-3 {
-  margin-bottom: 1rem; /* Adjust margin between fields */
+  margin-bottom: 1rem;
+  /* Adjust margin between fields */
 }
 
 #signup-form .input-group {
-  margin-bottom: 1rem; /* Adjust margin between input groups */
+  margin-bottom: 1rem;
+  /* Adjust margin between input groups */
 }
 
 /* Background Particle Canvas */
@@ -223,6 +232,7 @@ input:-webkit-autofill {
   /* Prevent text wrapping */
   text-align: center;
 }
+
 /* Ip Logging */
 
 .log-entry td {
@@ -275,9 +285,9 @@ html {
 #downloadsTableBody {
   text-align: center;
   font-family: 'Genome', sans-serif;
-  vertical-align: middle; /* Vertically centers the text in table cells */
+  vertical-align: middle;
+  /* Vertically centers the text in table cells */
 
-                                                
 }
 
 #downloads-header {
@@ -353,12 +363,30 @@ html {
 #navbar {
   opacity: 0;
   transition: opacity 0.5s ease-in-out;
+
+}
+
+#search-button {
+  font-family: 'Anime Ace', sans-serif;
+  font-size: clamp(10px, 1vw, 14px);
+}
+
+#navbar {
+  display: none;
+}
+
+.errorToastContainer {
+  z-index: 1050 !important;
 }
 
 #download-link a {
   font-family: Bahnschrift, 'DIN Alternate', 'Franklin Gothic Medium', 'Nimbus Sans Narrow', sans-serif-condensed, sans-serif;
   text-decoration: none;
   font-weight: lighter;
+}
+
+#updatedLink {
+  text-decoration: none;
 }
 
 /* Base styles for the .download-page-img class */
@@ -388,4 +416,19 @@ html {
   /* Increase the size by 20% */
   transition: transform 0.3s ease;
   /* Smooth scaling effect */
+}
+
+#alertPlaceholder {
+  z-index: 1050 !important;
+}
+
+#downloadsTableContainer {
+  max-height: 60vh;
+  max-width: 82vw;
+}
+
+/* IP Log Page */
+
+#ipTableContainer {
+  max-height: 100vh !important;
 }

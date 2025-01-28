@@ -58,7 +58,6 @@ iframe {
     background-color: black;
 }
 
-#poop {
-    text-align: center;
-    font-size: 24px;
+#gameIframe {
+    display: none;
 }

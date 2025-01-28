@@ -49,7 +49,7 @@ router.get('/', async (req, res) => {
             </tr>`).join('');
 
         const updatedHtml = htmlTemplate.replace('<!-- LOG_ENTRIES -->', tableRows);
-        res.send(updatedHtml);
+        res.send(updatedHtml.replace('<%= scriptNonce %>', res.locals.scriptNonce).replace('<%= styleNonce %>', res.locals.styleNonce));
 
         client.release();
     } catch (err) {

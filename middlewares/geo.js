@@ -9,13 +9,13 @@ const MAX_LOG_ENTRIES = 100;
 
 // Function to determine if an IP is private
 const isPrivateIp = (ip) => {
-    return ip.startsWith('192.168.0') || ip === '127.0.0.1' || ip === '::1' || ip === 'localhost';
+    return ip?.startsWith('192.168.0') || ip === '127.0.0.1' || ip === '::1' || ip === 'localhost';
 };
 
 // Middleware to log IP geolocation
 const logIpGeolocation = async (req, res, next) => {
     let clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    if (clientIp.startsWith('::ffff:')) {
+    if (clientIp?.startsWith('::ffff:')) {
         clientIp = clientIp.split(':').pop();
     }
 

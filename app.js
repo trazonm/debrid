@@ -18,9 +18,8 @@ createUserTable();
 createIpTable();
 const pool = require('./utils/pool');
 
-
 // Config imports
-const cspPolicy = require('./config/cspPolicy');
+const { cspPolicy, scriptNonce, styleNonce } = require('./config/cspPolicy');
 
 // Middleware imports
 const { logIpGeolocation, restrictToUS } = require('./middlewares/geo');
@@ -62,6 +61,13 @@ app.use(restrictToUS);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser()); // Use cookie-parser
+
+// Middleware to set nonces for each request
+app.use((req, res, next) => {
+    res.locals.scriptNonce = scriptNonce;
+    res.locals.styleNonce = styleNonce;
+    next();
+});
 
 // Use Helmet to apply the CSP policy
 app.use(helmet.contentSecurityPolicy(cspPolicy));
