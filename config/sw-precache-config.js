@@ -5,7 +5,7 @@ module.exports = {
     'public/**',
     'manifest.json',
     'views/*.html',
-    'public/assets/styles.autoprefixed.css',
+    'public/assets/*.css',
     'public/js/*.js',
   ],
   staticFileGlobsIgnorePatterns: [
