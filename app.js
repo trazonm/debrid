@@ -12,18 +12,12 @@ const fs = require('fs');
 const sessionMiddleware = require('./middlewares/authMiddleware');
 const nocache = require('nocache');
 const PgSession = require("connect-pg-simple")(session);
-const { Pool } = require('pg');
 
 // Initialize database tables
 createUserTable(); 
 createIpTable();
-const pool = new Pool({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT,
-  });
+const pool = require('./utils/pool');
+
 
 // Config imports
 const cspPolicy = require('./config/cspPolicy');

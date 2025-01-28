@@ -1,0 +1,64 @@
+body {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #000;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    text-align: center;
+}
+
+.message {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.go-home-button,
+.play-game-button {
+    color: white;
+    background-color: red;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.go-home-button:hover,
+.play-game-button:hover {
+    background-color: darkred;
+}
+
+iframe {
+    border: none;
+    width: 100vw;
+    height: 90vh;
+    margin-top: 20px;
+}
+
+#particleCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    background-color: black;
+}
+
+#poop {
+    text-align: center;
+    font-size: 24px;
+}

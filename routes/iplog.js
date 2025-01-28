@@ -1,18 +1,9 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const { Pool } = require('pg'); // PostgreSQL client
 require('dotenv').config();
-
 const router = express.Router();
-
-const pool = new Pool({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT,
-});
+const pool = require('../utils/pool');
 
 // Middleware to restrict access to bakaboi341
 const restrictToBakaboi341 = (req, res, next) => {
@@ -49,6 +40,7 @@ router.get('/', async (req, res) => {
         }));
 
         const htmlTemplate = fs.readFileSync(path.join(__dirname, '../views/iplog.html'), 'utf-8');
+        formattedLogEntries.reverse(); // Show the most recent log entries first
         const tableRows = formattedLogEntries.map(entry => `
             <tr class="log-entry">
                 <td>${entry.ip}</td>

@@ -22,10 +22,10 @@
     "sw-precache": "^5.0.0"
   },
   "scripts": {
-    "build:css": "postcss public/assets/styles.css -o public/assets/styles.autoprefixed.css",
-    "watch:css": "postcss public/assets/styles.css -o public/assets/styles.autoprefixed.css --watch",
+    "build:css": "postcss public/assets/styles.css -o public/assets/styles.autoprefixed.css && postcss public/assets/404.css -o public/assets/404.autoprefixed.css",
+    "watch:css": "postcss public/assets/styles.css -o public/assets/styles.autoprefixed.css --watch && postcss public/assets/404.css -o public/assets/404.autoprefixed.css --watch",
     "build:sw": "sw-precache --config config/sw-precache-config.js --verbose",
-    "dev": "concurrently \"postcss public/assets/styles.css -o public/assets/styles.autoprefixed.css --watch\" \"nodemon app.js\"",
+    "dev": "concurrently \"postcss public/assets/styles.css -o public/assets/styles.autoprefixed.css --watch\" \"postcss public/assets/404.css -o public/assets/404.autoprefixed.css --watch\" \"nodemon app.js\"",
     "start": "node app.js"
   },
   "author": "BakaBoi341",
