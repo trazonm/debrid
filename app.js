@@ -36,6 +36,8 @@ const downloadRoutes = require('./routes/downloads');
 // Import nocache middleware
 app.use(nocache());
 
+app.set('trust proxy', ['loopback', 'linklocal', 'uniquelocal']);
+
 // Session configuration
 app.use(session({
     store: new PgSession({
