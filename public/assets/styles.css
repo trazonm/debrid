@@ -194,7 +194,8 @@ input:-webkit-autofill {
 }
 
 #search-section {
-  max-width: 63vw;
+  visibility: hidden;
+  max-width: 70vw;
 }
 
 #toggle-signup-password,
@@ -362,6 +363,10 @@ html {
   opacity: 0;
   transition: opacity 0.5s ease-in-out;
 
+}
+
+#auth-link {
+  visibility: hidden;
 }
 
 #search-button {
