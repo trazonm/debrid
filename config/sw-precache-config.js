@@ -9,7 +9,12 @@ module.exports = {
     'public/js/*.js',
   ],
   staticFileGlobsIgnorePatterns: [
-    /\.(mp4|webm|ogg|mp3|wav|flac)$/, // Exclude large media files
+    '**/*.mp4',
+    '**/*.webm',
+    '**/*.ogg',
+    '**/*.mp3',
+    '**/*.wav',
+    '**/*.flac',
   ],
   stripPrefix: '',
   runtimeCaching: [
@@ -28,10 +33,6 @@ module.exports = {
     {
       urlPattern: /\/views\//,
       handler: 'networkFirst',
-    },
-    {
-      urlPattern: /\.(mp4|webm|ogg|mp3|wav|flac)$/,
-      handler: 'networkOnly', // Prevent caching of media files
     },
   ],
   swFilePath: `sw-${version}.js`, // Dynamically add versioning
