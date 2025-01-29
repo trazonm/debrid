@@ -19,7 +19,7 @@ module.exports = {
   stripPrefix: '',
   runtimeCaching: [
     {
-      urlPattern: /\/public\//,
+      urlPattern: /\/public\/(?!.*\.(mp4|webm|ogg|mp3|wav|flac)$)/,
       handler: 'networkFirst',
     },
     {
