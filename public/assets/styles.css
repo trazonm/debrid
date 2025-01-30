@@ -339,7 +339,7 @@ html {
   font-family: 'Long distance call', sans-serif;
   font-size: 8em;
   margin-bottom: 20px;
-  color: #ff00bb;
+  color: #b515ff;
 }
 
 #downloadsHeader span {
@@ -361,7 +361,7 @@ html {
 #search-section,
 #navbar {
   opacity: 0;
-  transition: opacity 0.5s ease-in-out;
+  transition: opacity 1s ease-in-out;
 
 }
 
@@ -429,7 +429,7 @@ html {
   max-height: 60vh;
   max-width: 82vw;
   opacity: 0;
-  transition: opacity 0.5s ease-in-out;
+  transition: opacity 1s ease-in-out;
 }
 
 /* IP Log Page */
