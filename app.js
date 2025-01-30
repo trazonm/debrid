@@ -105,8 +105,8 @@ app.get('/sw.js', (req, res) => {
 // Routes
 app.use('/', indexRoutes);
 app.use('/iplog', sessionMiddleware, ipRoutes);
-app.use('/torrents', torrentRoutes);
-app.use('/search', searchRoutes);
+app.use('/torrents', sessionMiddleware, torrentRoutes);
+app.use('/search', sessionMiddleware,searchRoutes);
 app.use('/account', accountRoutes);
 app.use('/downloads', sessionMiddleware, downloadRoutes);
 app.use((req, res, next) => {

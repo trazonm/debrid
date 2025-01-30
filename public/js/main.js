@@ -1,5 +1,5 @@
 // main.js
-import { sendSearchRequest } from './search.js';
+import { sendSearchRequest } from './searchRequest.js';
 
 document.addEventListener("DOMContentLoaded", function () {
   registerServiceWorker();

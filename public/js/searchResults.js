@@ -1,15 +1,11 @@
 // ui.js
-import { getItemsPerPage, getPaginatedData } from './config.js'; // Import the functions
-import { generateLink } from './download.js';
+import { getPaginatedData } from './pageConfig.js'; // Import the functions
+import { generateLink } from './generateDownload.js';
 
 export function showPage(page) {
     const tableBody = document.getElementById('resultsTableBody');
     tableBody.innerHTML = ''; // Clear previous results
-
-    const itemsPerPage = getItemsPerPage(); // Get items per page using the function
-    const start = (page - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    const pageData = getPaginatedData().slice(start, end); // Use the getter to access paginated data
+    const pageData = getPaginatedData(); // Use the getter to access paginated data
 
     pageData.forEach(item => {
         const row = document.createElement('tr');

@@ -1,4 +1,4 @@
-import { formatSize } from './ui.js';
+import { formatSize } from './searchResults.js';
 const progressIntervals = {}; // Store intervals for each download ID
 
 fetch('/account/downloads')
