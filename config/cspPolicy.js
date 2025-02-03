@@ -56,7 +56,8 @@ const cspPolicy = {
         frameSrc: [
             "'self'",
             "https://www.google.com",
-            "https://jcw87.github.io/"
+            "https://jcw87.github.io/",
+            "https://bakaserver.gleeze.com",
         ]
     }
 };

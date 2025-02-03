@@ -31,6 +31,7 @@ const torrentRoutes = require('./routes/torrents');
 const searchRoutes = require('./routes/search');
 const accountRoutes = require('./routes/account');
 const downloadRoutes = require('./routes/downloads');
+const brainRoutes = require('./routes/brain');
 
 // Import nocache middleware
 app.use(nocache());
@@ -109,6 +110,7 @@ app.use('/torrents', sessionMiddleware, torrentRoutes);
 app.use('/search', sessionMiddleware,searchRoutes);
 app.use('/account', accountRoutes);
 app.use('/downloads', sessionMiddleware, downloadRoutes);
+app.use('/brain', sessionMiddleware, brainRoutes);
 app.use((req, res, next) => {
     res.status(404).render('404');
 });
