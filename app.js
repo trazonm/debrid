@@ -20,6 +20,7 @@ const pool = require('./utils/pool');
 
 // Config imports
 const { cspPolicy, scriptNonce, styleNonce } = require('./config/cspPolicy');
+const sessionConfig = require('./config/sessionConfig');
 
 // Middleware imports
 const { logIpGeolocation, restrictToUS } = require('./middlewares/geo');
@@ -32,27 +33,15 @@ const searchRoutes = require('./routes/search');
 const accountRoutes = require('./routes/account');
 const downloadRoutes = require('./routes/downloads');
 const brainRoutes = require('./routes/brain');
+const swRoute = require('./routes/sw'); // Import swRoute
 
-// Import nocache middleware
+// App configuration
 app.use(nocache());
-
+app.disable('x-powered-by');
 app.set('trust proxy', ['loopback', 'linklocal', 'uniquelocal']);
 
 // Session configuration
-app.use(session({
-    store: new PgSession({
-        pool, // Reuse the Postgres connection pool
-        tableName: "session", // Name of the table for session data
-        createTableIfMissing: true, // Automatically create the session table if it doesn't exist
-      }),
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        secure: process.env.NODE_ENV === "production", // Secure cookies only in production
-        maxAge: 24 * 60 * 60 * 1000 // Session lasts for 24 hours
-    }
-}));
+app.use(session(sessionConfig));
 
 console.log('Production environment?', process.env.NODE_ENV === 'production');
 
@@ -79,29 +68,7 @@ app.use(express.static(path.join(__dirname, './')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Serve the versioned sw.js file (e.g., sw-1234567890.js)
-app.get('/sw.js', (req, res) => {
-    // Fetch the version from version.json
-    fs.readFile(path.join(__dirname, 'version.json'), 'utf8', (err, data) => {
-        if (err) {
-            console.error('Error reading version.json:', err);
-            return res.status(500).json({ error: 'Internal Server Error' });
-        }
-        const version = JSON.parse(data).version;
-        // Construct the file path based on the version]
-
-        const swFilePath = path.join(__dirname, `sw-${version}.js`);
-        console.log('Service Worker file path:', swFilePath);
-        
-        // Ensure the versioned service worker file exists and serve it
-        fs.existsSync(swFilePath, exists => {
-            if (exists) {
-                res.sendFile(swFilePath);
-            } else {
-                res.status(404).json({ error: 'Service Worker not found' });
-            }
-        });
-    });
-});
+app.use(swRoute);
 
 // Routes
 app.use('/', indexRoutes);
