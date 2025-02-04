@@ -15,7 +15,6 @@ const cspPolicy = {
         scriptSrc: [
             "'self'",
             `'nonce-${scriptNonce}'`,
-            "'unsafe-eval'",
             "https://cdn.jsdelivr.net",
             "https://www.google.com/recaptcha/",
             "https://*.google.com/recaptcha/",
