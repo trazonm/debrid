@@ -342,10 +342,6 @@ html {
   color: #b515ff;
 }
 
-#downloadsHeader span {
-  background: rgb(0, 0, 0);
-}
-
 .downloads-table td {
   background-color: rgba(0, 0, 0, 0.557) !important;
   /* Semi-transparent background */
