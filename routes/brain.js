@@ -8,7 +8,8 @@ const pool = require('../utils/pool');
 // Middleware to restrict access to bakaboi341
 const restrict = (req, res, next) => {
     const username = req.session.user; // Assuming username is stored in session
-    if (username === 'bakaboi341' || username === 'im_james420' || username === 'limeking') {
+    const allowedUsers = ['bakaboi341', 'im_james420', 'limeking', 'wizkid'];
+    if (allowedUsers.includes(username)) {
         return next();
     } else {
         return res.status(403).send('Access denied.');
