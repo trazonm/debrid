@@ -8,10 +8,8 @@ const cookieParser = require('cookie-parser'); // Add cookie-parser
 const { createUserTable } = require('./models/user');
 const { createIpTable } = require('./models/iplog'); // Import createTable function
 const app = express();
-const fs = require('fs');
 const sessionMiddleware = require('./middlewares/authMiddleware');
 const nocache = require('nocache');
-const PgSession = require("connect-pg-simple")(session);
 
 // Initialize database tables
 createUserTable(); 
@@ -19,7 +17,7 @@ createIpTable();
 const pool = require('./utils/pool');
 
 // Config imports
-const { cspPolicy, scriptNonce, styleNonce } = require('./config/cspPolicy');
+const { cspPolicy, scriptNonce, styleNonce, fontNonce, imgNonce, mediaNonce } = require('./config/cspPolicy');
 const sessionConfig = require('./config/sessionConfig');
 
 // Middleware imports
@@ -33,6 +31,7 @@ const searchRoutes = require('./routes/search');
 const accountRoutes = require('./routes/account');
 const downloadRoutes = require('./routes/downloads');
 const brainRoutes = require('./routes/brain');
+const premRoutes = require('./routes/premiumizer');
 const swRoute = require('./routes/sw'); // Import swRoute
 
 // App configuration
@@ -56,6 +55,9 @@ app.use(cookieParser()); // Use cookie-parser
 app.use((req, res, next) => {
     res.locals.scriptNonce = scriptNonce;
     res.locals.styleNonce = styleNonce;
+    res.locals.fontNonce = fontNonce;
+    res.locals.imgNonce = imgNonce;
+    res.locals.mediaNonce = mediaNonce;
     next();
 });
 
@@ -78,6 +80,7 @@ app.use('/search', sessionMiddleware,searchRoutes);
 app.use('/account', accountRoutes);
 app.use('/downloads', sessionMiddleware, downloadRoutes);
 app.use('/brain', sessionMiddleware, brainRoutes);
+app.use('/premiumizer', sessionMiddleware, premRoutes);
 app.use((req, res, next) => {
     res.status(404).render('404');
 });

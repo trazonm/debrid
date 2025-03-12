@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BakaWorld</title>
+    <link href="https://fonts.cdnfonts.com/css/anime-ace" rel="stylesheet" nonce="<%= styleNonce %>">
+    <link href="https://fonts.cdnfonts.com/css/long-distance-call" rel="stylesheet" nonce="<%= styleNonce %>">
+    <link rel="icon" type="image/jpeg" href="/public/assets/favicon.jpg">
+    <link href="/public/assets/premiumizer.autoprefixed.css" rel="stylesheet" type="text/css" nonce="<%= styleNonce %>">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"
+        nonce="<%= styleNonce %>">
+    <!-- Add Bootstrap Icons CSS with proper nonce -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" nonce="<%= styleNonce %>">
+    <link rel="manifest" href="./manifest.json">
+    <link href="https://fonts.cdnfonts.com/css/clubbed-to-life" rel="stylesheet" nonce="<%= styleNonce %>">
+    <link href="https://fonts.cdnfonts.com/css/licenseplates" rel="stylesheet" nonce="<%= styleNonce %>">
+</head>
+
+<body class="bg-black">
+    <nav id="navbar" class="navbar fixed-top fade-in">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
+                aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar"
+                aria-labelledby="offcanvasNavbarLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="/">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/downloads">Downloads</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/premiumizer">Premiumizer</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/brain">Brain</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" id="logout-button">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3 errorToastContainer">
+        <div id="errorToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive"
+            aria-atomic="true">
+            <div class="d-flex">
+                <div id="toast-body" class="toast-body">
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+        <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert"
+            aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div id="toast-body-success" class="toast-body">
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    <canvas id="particleCanvas"></canvas>
+    <div class="container-fluid text-center w-75">
+        <div class="row flex-column">
+            <!-- Main title section - always visible -->
+            <div class="col-12 d-flex flex-column align-items-center justify-content-center mb-2 mb-md-3">
+                <h1 id="debrid" class="responsive-title mt-5">Premiumizer</h1>
+                <div id="unrestrict-section" class="input-group input-group-sm mb-3 fade-in w-100 px-3">
+                    <input type="text" id="searchInput" class="form-control" required placeholder="Unrestrict hoster links"
+                        aria-label="Search input" aria-describedby="search-button">
+                    <button class="btn btn-outline-success" type="button" id="search-button">Unrestrict</button>
+                </div>
+                <div id="loadingSpinner" class="spinner-border text-success" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+
+            <!-- Mobile tabs navigation -->
+            <div class="col-12 d-md-none mb-3">
+                <ul class="nav nav-pills nav-fill" id="mobileNav" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="downloads-tab" data-bs-toggle="tab" data-bs-target="#downloads-content" 
+                            type="button" role="tab" aria-selected="true">Downloads</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="hosters-tab" data-bs-toggle="tab" data-bs-target="#hosters-content" 
+                            type="button" role="tab" aria-selected="false">Hosters</button>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Content for mobile tabs and desktop layout -->
+            <div class="col tab-content d-md-flex flex-md-row flex-grow-1">
+                                <!-- Hosters section -->
+                <div class="tab-pane fade d-flex flex-column col-md-6" id="hosters-content" role="tabpanel">
+                    <div class="card bg-transparent w-100 h-100">
+                        <div class="card-header bg-dark">
+                            <h4 class="mb-0">Supported Hosters</h4>
+                        </div>
+                        <div class="card-body bg-transparent">
+                            <div class="row row-cols-1 g-2" id="hostersContainer">
+                                <div class="col text-center" id="loadingHosters">
+                                    <div class="spinner-border text-success" role="status">
+                                        <span class="visually-hidden">Loading hosters...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Downloads section -->
+                <div class="tab-pane fade show active d-flex flex-column col-md-6" id="downloads-content" role="tabpanel">
+                    <div class="card bg-transparent w-100 h-100">
+                        <div class="card-header bg-dark justify-content-between align-items-center">
+                            <h4 class="mb-0">Hoster Downloads</h4>
+                        </div>
+                        <div class="card-body bg-transparent">
+                            <div class="row row-cols-1 g-2" id="downloadsContainer">
+                                <div class="col text-center" id="loadingDownloads">
+                                    <div class="spinner-border text-success" role="status">
+                                        <span class="visually-hidden">Loading downloads...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"
+        nonce="<%= scriptNonce %>">
+    </script>
+    <script src="../public/js/hosterLinks.js" nonce="<%= scriptNonce %>"></script>
+    <script src="../public/js/particleBackgroundHosters.js" nonce="<%= scriptNonce %>"></script>
+    <script src="../public/js/auth.js" nonce="<%= scriptNonce %>"></script>
+</body>
+
+</html>

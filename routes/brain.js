@@ -19,7 +19,7 @@ const restrict = (req, res, next) => {
 router.use(restrict); // Apply the middleware to all routes in this router
 
 router.get('/', async (req, res) => {
-    res.render('brain', { scriptNonce: res.locals.scriptNonce, styleNonce: res.locals.styleNonce, user: req.session.user });
+    res.render('brain', { scriptNonce: res.locals.scriptNonce, styleNonce: res.locals.styleNonce, fontNonce: res.locals.fontNonce, mediaNonce: res.locals.mediaNonce, imgNonce: res.locals.imgNonce, user: req.session.user });
 });
 
 module.exports = router;

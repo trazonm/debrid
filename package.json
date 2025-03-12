@@ -4,6 +4,7 @@
   "description": "An easy way to search and download for torrents via real debrid.",
   "main": "app.js",
   "dependencies": {
+    "@distube/ytdl-core": "^4.16.4",
     "axios": "^1.7.7",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
@@ -20,13 +21,14 @@
     "nocache": "^4.0.0",
     "path": "^0.12.7",
     "pg": "^8.13.1",
-    "sw-precache": "^5.0.0"
+    "sw-precache": "^5.0.0",
+    "uuid": "^9.0.1"
   },
   "scripts": {
-    "build:css": "postcss public/assets/styles.css -o public/assets/styles.autoprefixed.css && postcss public/assets/404.css -o public/assets/404.autoprefixed.css && postcss public/assets/brain.css -o public/assets/brain.autoprefixed.css",
-    "watch:css": "postcss public/assets/styles.css -o public/assets/styles.autoprefixed.css --watch && postcss public/assets/404.css -o public/assets/404.autoprefixed.css --watch && postcss public/assets/brain.css -o public/assets/brain.autoprefixed.css --watch",
+    "build:css": "postcss public/assets/styles.css -o public/assets/styles.autoprefixed.css && postcss public/assets/404.css -o public/assets/404.autoprefixed.css && postcss public/assets/brain.css -o public/assets/brain.autoprefixed.css && postcss public/assets/premiumizer.css -o public/assets/premiumizer.autoprefixed.css",
+    "watch:css": "postcss public/assets/styles.css -o public/assets/styles.autoprefixed.css --watch && postcss public/assets/404.css -o public/assets/404.autoprefixed.css --watch && postcss public/assets/brain.css -o public/assets/brain.autoprefixed.css --watch && postcss public/assets/premiumizer.css -o public/assets/premiumizer.autoprefixed.css --watch",
     "build:sw": "sw-precache --config config/sw-precache-config.js --verbose",
-    "dev": "concurrently \"postcss public/assets/styles.css -o public/assets/styles.autoprefixed.css --watch\" \"postcss public/assets/404.css -o public/assets/404.autoprefixed.css --watch\" \"postcss public/assets/brain.css -o public/assets/brain.autoprefixed.css --watch\" \"nodemon app.js\"",
+    "dev": "concurrently \"postcss public/assets/styles.css -o public/assets/styles.autoprefixed.css --watch\" \"postcss public/assets/404.css -o public/assets/404.autoprefixed.css --watch\" \"postcss public/assets/brain.css -o public/assets/brain.autoprefixed.css --watch\" \"postcss public/assets/premiumizer.css -o public/assets/premiumizer.autoprefixed.css --watch\" \"nodemon app.js\"",
     "start": "node app.js"
   },
   "author": "BakaBoi341",

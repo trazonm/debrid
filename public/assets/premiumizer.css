@@ -1,0 +1,838 @@
+body {
+  background-color: black;
+
+}
+
+.display-1 {
+  color: red;
+}
+
+#offcanvasNavbar {
+  background: rgba(0, 0, 0, 0.477);
+}
+
+.offcanvas-title {
+  font-family: 'Clubbed to Life', sans-serif;
+  font-size: 2em;
+}
+
+.navbar-nav {
+  font-family: 'LicensePlates', sans-serif;
+  font-size: 5em;
+}
+
+.auth-form-title {
+  font-family: Bahnschrift, 'DIN Alternate', 'Franklin Gothic Medium', 'Nimbus Sans Narrow', sans-serif-condensed, sans-serif !important;
+  font-weight: normal;
+}
+
+.grecaptcha-badge {
+  visibility: hidden !important;
+}
+
+.badge {
+  margin: 0.25rem !important;
+}
+
+.active-background {
+  color: white !important;
+}
+
+.active-background.active {
+  background-color: rgb(30, 29, 29) !important;
+}
+
+.toast {
+  z-index: 1060 !important;
+  font-family: 'anime ace', sans-serif;
+  font-size: 1em !important;
+}
+
+#toast-body-success {
+  font-size: 0.75em !important;
+}
+
+.card-body {
+  max-height: 50vh;
+  overflow-y: auto;
+  padding: 1.25rem;
+}
+
+#link {
+  max-width: 200px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+td {
+  max-width: 200px;
+  word-wrap: break-word;
+}
+
+#debrid {
+  font-family: 'Long distance call', sans-serif;
+  color: rgb(1, 212, 82);
+  font-size: 8em;
+  margin-top: 1rem;
+}
+
+@media (max-width: 576px) {
+  #debrid {
+    font-size: 3em;
+  }
+}
+
+#search-button {
+  font-family: 'Anime Ace', sans-serif;
+  font-size: clamp(10px, 1vw, 14px);
+}
+
+#searchInput,
+input:-webkit-autofill {
+  font-family: 'Anime Ace', sans-serif;
+  color: rgb(230, 230, 230);
+  font-size: clamp(10px, 1vw, 14px);
+  background-color: transparent !important;
+
+}
+
+#searchInput:focus {
+  border-color: rgb(1, 212, 82);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(4, 204, 11, 0.6);
+}
+
+#searchInput::placeholder {
+  opacity: 0.7;
+}
+
+#loadingSpinner {
+  display: block;
+  visibility: hidden;
+}
+
+@media (max-width: 576px) {
+  #searchInput {
+    font-size: 8px;
+    /* Set a fixed font size for small screens */
+  }
+}
+
+.input-group {
+  /* max-width: 80vw; */
+  padding-top: 30px;
+  /* Reduced padding */
+  width: 75vw !important;
+}
+
+#search-section {
+  visibility: hidden;
+  max-width: 70vw;
+}
+
+.hoster-image {
+  max-height: 30px;
+  max-width: 80px;
+}
+
+.card-container {
+  height: 50vh !important;
+}
+
+/* Mobile specific styles */
+@media (max-width: 768px) {
+  .card {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .card-body {
+    max-height: 50vh;
+    padding: 0.5rem;
+  }
+
+  .alt-filename span {
+    display: none;
+  }
+
+  .alt-filename small {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    text-align: center;
+    width: auto;
+  }
+  
+  .alt-filename {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  /* Make sure the badge is properly centered */
+  .alt-item .badge {
+    margin: 0 auto !important;
+    min-width: 80px;
+  }
+
+  .alt-filename span {
+    display: none;
+  }
+
+  .alt-filename small {
+    align-items: center;
+  }
+  /* Tab navigation styling for mobile */
+  #mobileNav .nav-link {
+    color: rgb(1, 212, 82);
+    background-color: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    font-family: 'Anime Ace', sans-serif;
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0;
+    transition: color 0.2s, border-color 0.2s;
+    margin: 0 0.25rem;
+  }
+
+  #mobileNav .nav-link:hover {
+    color: rgba(1, 212, 82, 0.8);
+    border-bottom-color: rgba(1, 212, 82, 0.4);
+  }
+
+  #mobileNav .nav-link.active {
+    color: rgb(1, 212, 82);
+    background-color: transparent;
+    border-bottom-color: rgb(1, 212, 82);
+    font-weight: bold;
+  }
+
+  /* Add some padding to the nav container */
+  #mobileNav {
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(1, 212, 82, 0.2);
+  }
+
+  /* Remove any bootstrap default styles that might interfere */
+  #mobileNav .nav-pills .nav-link {
+    border-radius: 0;
+  }
+
+  .download-item .card {
+    margin-bottom: 0.5rem;
+  }
+
+  /* Tighter spacing for mobile */
+  .card-body .row {
+    row-gap: 0.25rem !important;
+  }
+
+  .card-body .download-item {
+    margin-bottom: 0.25rem;
+  }
+
+  /* File content display */
+  .filename {
+    font-size: 0.8rem;
+  }
+
+  /* Fix for tab content positioning on mobile */
+  .tab-content {
+    height: auto;
+    min-height: 300px;
+  }
+
+  .tab-pane {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+
+  .tab-pane.fade:not(.show) {
+    display: none !important;
+    height: 0 !important;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+  }
+
+  .tab-pane.fade.show.active {
+    display: flex !important;
+    opacity: 1 !important;
+  }
+
+  /* Ensure card takes proper position */
+  .tab-pane .card {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  /* Completely reset the styling for alt-filename and its descendants */
+  .alt-filename {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin: 0 auto;
+  }
+  
+  /* Hide the filename text on mobile, keep only the badge */
+  .alt-filename span {
+    display: none;
+  }
+  
+  /* Center the badge properly */
+  .alt-filename small.badge {
+    display: inline-block;
+    margin: 0.25rem auto !important;
+    min-width: 80px;
+    max-width: 150px;
+    text-align: center;
+  }
+  
+  /* Align "Alternates" heading center */
+  .alternatives p.mb-1 {
+    text-align: center;
+    width: 100%;
+  }
+  
+  /* Adjust the spacing and layout of alternative items */
+  .alt-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .alt-item .d-flex {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Put download button below the badge */
+  .alt-item .btn {
+    margin-top: 0.5rem;
+  }
+
+  /* Mobile-only styling for alternative items - UPDATED */
+  .alt-filename {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .alt-filename span {
+    display: none; /* Hide filename on mobile */
+  }
+  
+  .alt-filename small.badge {
+    margin: 0.25rem 0 !important;
+  }
+  
+  /* Align "Alternates" heading center but keep items in row */
+  .alternatives p.mb-1 {
+    text-align: center;
+  }
+  
+  /* Keep alternative items in a row with space between badge and download button */
+  .alt-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  /* Override any column direction styles that might be applied */
+  .alt-item .d-flex {
+    flex-direction: row !important;
+  }
+  
+  /* Keep the download button on same line, not below the badge */
+  .alt-item .btn {
+    margin-top: 0;
+    margin-left: auto;
+  }
+  
+  /* Ensure the container has proper spacing */
+  .alt-item > div {
+    flex: 1;
+  }
+  
+  /* Adjust badge width on mobile */
+  .alt-item .badge {
+    min-width: unset;
+    max-width: unset;
+    width: auto;
+  }
+
+  /* Improved mobile-only styling for alternative items */
+  .alt-item {
+    display: flex;
+    flex-direction: row !important; /* Force row layout */
+    justify-content: space-between !important;
+    align-items: center !important; /* Vertical alignment */
+    width: 100%;
+    padding-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .alt-filename {
+    display: inline-flex !important; /* Inline-flex for proper alignment */
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important; /* Left align the badge */
+    width: auto !important; /* Don't take full width */
+    margin: 0 !important;
+  }
+  
+  /* Badge styling */
+  .alt-filename small.badge {
+    display: inline-block !important;
+    margin: 0 !important;
+    min-width: unset !important;
+    max-width: unset !important;
+    text-align: center;
+  }
+  
+  /* Download button styling */
+  .alt-item .btn {
+    margin: 0 0 0 auto !important; /* Auto margin left for right alignment */
+    align-self: center !important;
+  }
+  
+  /* Remove any column directions */
+  .alt-item, .alt-item .d-flex, .alt-item > div {
+    flex-direction: row !important;
+  }
+  
+  /* Center the alternatives heading */
+  .alternatives p.mb-1 {
+    text-align: center;
+    width: 100%;
+  }
+
+  /* Final improved mobile styling - with centered badge and right-aligned button */
+  .alt-item {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+    padding-top: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .alt-filename {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    flex: 1 !important;
+    margin: 0 !important;
+    padding-left: 1.8rem !important; /* Move quality badge to the right */
+  }
+  
+  /* Center the badge inside alt-filename */
+  .alt-filename small.badge {
+    display: inline-block !important;
+    margin: 0 auto !important;
+    text-align: center !important;
+    /* min-width: 80px !important; */
+    position: relative !important;
+    left: 0.75rem !important; /* Shift badge to the right */
+  }
+  
+  /* Always hide the filename on mobile */
+  .alt-filename span {
+    display: none !important;
+  }
+  
+  /* Right-align the download button */
+  .alt-item .btn {
+    margin-top: 0 !important;
+    margin-left: 0.5rem !important;
+    margin-right: 0.5rem !important; /* Add right margin for balance */
+    align-self: center !important;
+    flex-shrink: 0 !important;
+  }
+}
+
+/* iPad Mini (768px width) specific fix */
+@media (width: 768px) {
+  /* Ensure both panes are visible on iPad Mini */
+  .tab-pane {
+    display: block !important;
+    opacity: 1 !important;
+  }
+  
+  /* Fix layout for iPad Mini */
+  .tab-content {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+  }
+  
+  /* Improve columns on iPad Mini */
+  .col-md-6 {
+    max-width: 48%;
+    padding: 0;
+  }
+  
+  /* Make sure cards are properly sized */
+  .card {
+    width: 100% !important;
+  }
+  
+  /* Ensure card headers are visible */
+  .card-header {
+    display: block !important;
+    visibility: visible !important;
+  }
+  
+  /* Make sure tab navigation is hidden on exactly 768px width */
+  .d-md-none {
+    display: none !important;
+  }
+  
+  /* Force desktop view for this specific size */
+  #hosters-content, #downloads-content {
+    display: flex !important;
+    visibility: visible !important;
+    height: auto !important;
+    opacity: 1 !important;
+  }
+}
+
+/* iPad/tablet specific styles (portrait mode) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .tab-content {
+    padding: 0 5px;
+    gap: 10px;
+  }
+
+  .col-md-6 {
+    max-width: 48%;
+    /* Slightly less than 50% to account for gap */
+    padding: 0;
+  }
+
+  .card {
+    width: 100%;
+  }
+
+  /* Ensure text doesn't overflow */
+  .card-title,
+  .alternatives,
+  .card-text {
+    word-break: break-word;
+  }
+
+  /* Adjust rows spacing */
+  .row.row-cols-1 {
+    margin-right: 0;
+    margin-left: 0;
+  }
+
+  /* Fix for container overflow */
+  .container-fluid {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+}
+
+/* Remove any centering styles that might apply outside mobile */
+.alt-filename, 
+.alt-item,
+.alt-filename small,
+.alternatives p.mb-1 {
+  /* Reset any properties that might be inheriting from mobile styles */
+}
+
+/* Background Particle Canvas */
+#particleCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  background-color: black;
+}
+
+/* Download items styling */
+.download-item .card {
+  transition: all 0.2s ease;
+  max-width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.download-item .card-body {
+  padding: 1rem;
+}
+
+.download-item .card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Card layout improvements */
+.card {
+  margin: 0 auto;
+  border-radius: 8px !important;
+  border-color: rgba(194, 232, 201, 0.788) !important;
+  overflow: hidden;
+  max-width: 96%;
+  width: 100% !important;
+}
+
+.card-header {
+  max-width: 100vw;
+}
+
+.card-title {
+  color: #f8f9fa;
+  font-weight: 500;
+}
+
+.alternatives {
+  font-size: 0.9rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.alt-item {
+  margin-bottom: 0.5rem;
+}
+
+.alt-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Badge alignment styles for download items */
+.card-text {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.card-text .badge {
+  margin-right: 4px;
+  display: inline-flex;
+}
+
+.card-text .badge.bg-secondary {
+  text-align: left;
+  justify-content: flex-start;
+}
+
+.card-text .badge.bg-info {
+  text-align: center;
+  justify-content: center;
+}
+
+.card-text .badge.bg-success {
+  text-align: center;
+  justify-content: center;
+}
+
+.filename {
+  font-size: 0.9rem;
+}
+
+/* Added styles for tab content */
+.tab-content {
+  height: calc(100vh - 200px);
+  overflow: hidden;
+  padding: 0 10px;
+}
+
+@media (min-width: 769px) {
+  .tab-content {
+    display: flex;
+    flex-direction: row;
+    gap: 10px; /* Restore the original gap */
+  }
+
+  .tab-pane {
+    display: block !important;
+    opacity: 1 !important;
+  }
+
+  /* Add container width limit for large screens */
+  .col-md-6 {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* Desktop layout for alternatives section */
+  .alt-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .alt-filename {
+    display: flex;
+    align-items: center;
+  }
+  
+  .alt-filename span {
+    display: inline;
+    margin-left: 0.5rem;
+  }
+}
+
+/* iPad/tablet specific styles (portrait mode) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .tab-content {
+    padding: 0 5px;
+    gap: 10px;
+  }
+
+  .col-md-6 {
+    max-width: 48%;
+    /* Slightly less than 50% to account for gap */
+    padding: 0;
+  }
+
+  .card {
+    width: 100%;
+  }
+
+  /* Ensure text doesn't overflow */
+  .card-title,
+  .alternatives,
+  .card-text {
+    word-break: break-word;
+  }
+
+  /* Adjust rows spacing */
+  .row.row-cols-1 {
+    margin-right: 0;
+    margin-left: 0;
+  }
+
+  /* Fix for container overflow */
+  .container-fluid {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  /* Mobile specific styles for card spacing */
+  .download-item {
+    padding: 0 5px;
+    margin-bottom: 10px;
+  }
+
+  .card-body {
+    padding: 0.75rem;
+  }
+
+  #hostersContainer,
+  #downloadsContainer {
+    padding: 5px;
+  }
+
+  /* Important fix for mobile tab view */
+  .tab-content>.tab-pane {
+    display: none;
+    visibility: hidden;
+    height: 0;
+  }
+
+  .tab-content>.active {
+    display: flex !important;
+    visibility: visible;
+    height: auto;
+    margin-top: 0;
+  }
+}
+
+/* YouTube specific styling */
+.badge.bg-primary {
+  background-color: #0d6efd !important;
+  color: white;
+}
+
+.badge.bg-warning {
+  background-color: #ffc107 !important;
+  color: black !important;
+}
+
+.alt-item .badge.bg-primary,
+.alt-item .badge.bg-info,
+.alt-item .badge.bg-warning {
+  margin-left: 0.25rem;
+}
+
+/* Improved visibility for video/audio type badges */
+.card-text .badge.bg-info,
+.card-text .badge.bg-primary,
+.card-text .badge.bg-warning {
+  font-weight: 600;
+  padding: 0.35em 0.65em;
+}
+
+/* Add note styling */
+.alt-item small.text-muted {
+  font-size: 0.75rem;
+  display: block;
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 768px) {
+  /* Maintain type badge visibility on mobile */
+  .alt-filename small.badge + small.badge {
+    margin-left: 0.25rem !important;
+  }
+}
+
+/* Styling for expired indicators and refresh buttons */
+.card.border-danger {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 5px rgba(220, 53, 69, 0.5);
+}
+
+.badge.bg-danger {
+  background-color: #dc3545 !important;
+  color: white !important;
+}
+
+.btn-outline-warning {
+  border-color: #ffc107;
+  color: #ffc107;
+}
+
+.btn-outline-warning:hover {
+  background-color: #ffc107;
+  color: black;
+}
+
+.alt-refresh-btn, .refresh-btn {
+  padding: 0.25rem 0.5rem;
+}
+
+.alt-refresh-btn i, .refresh-btn i {
+  font-size: 0.875rem;
+}
+
+/* Make sure tooltip shows above other elements */
+.tooltip {
+  z-index: 1070;
+}
+
+/* YouTube hoster styling */
+.hoster-image[alt="YouTube"] {
+  background-color: white;
+  border-radius: 4px;
+  padding: 2px;
+  max-height: 28px;
+  max-width: 28px;
+}

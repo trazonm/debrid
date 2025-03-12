@@ -8,7 +8,7 @@ const router = express.Router();
 // Create an Axios instance with SSL verification disabled
 const axiosInstance = axios.create({
     httpsAgent: new https.Agent({
-        rejectUnauthorized: false
+        rejectUnauthorized: true
     })
 });
 

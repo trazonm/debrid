@@ -7,6 +7,9 @@ function generateNonce() {
 
 const scriptNonce = generateNonce();
 const styleNonce = generateNonce();
+const imgNonce = generateNonce();
+const fontNonce = generateNonce();
+const mediaNonce = generateNonce();
 
 const cspPolicy = {
     directives: {
@@ -35,17 +38,22 @@ const cspPolicy = {
 
         fontSrc: [
             "'self'",
+            `'nonce-${fontNonce}'`,
             "https://fonts.gstatic.com",
-            "https://fonts.cdnfonts.com"
+            "https://fonts.cdnfonts.com",
+            "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/"
         ],
 
         mediaSrc: [
+            `'nonce-${mediaNonce}'`,
             "'self'" // Allow audio from your own server
         ],
 
         imgSrc: [
             "'self'",
-            "data:"
+            "data:",
+            `'nonce-${imgNonce}'`,
+            "https://fcdn.real-debrid.com"
         ],
 
         objectSrc: ["'none'"],
