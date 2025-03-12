@@ -435,9 +435,7 @@ function populateHostersModal(hostersData) {
     if (loadingElement && loadingElement.parentNode === hostersContainer) {
         hostersContainer.removeChild(loadingElement);
     }
-    
-    console.log('Hosters:', hostersData);
-    
+        
     // Add YouTube to the hostersData
     hostersData['youtube.com'] = {
         name: 'YouTube',
@@ -539,7 +537,6 @@ document.getElementById('search-button').addEventListener('click', async () => {
         }
 
         const data = await response.json();
-        console.log('Unrestricted data:', data);
 
         // Save to database
         await saveDownload(data);

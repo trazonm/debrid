@@ -69,4 +69,4 @@ const cspPolicy = {
     }
 };
 
-module.exports = { cspPolicy, scriptNonce, styleNonce };
+module.exports = { cspPolicy, scriptNonce, styleNonce, imgNonce, fontNonce, mediaNonce };
