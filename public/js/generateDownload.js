@@ -168,7 +168,7 @@ export function finalizeDownload(id, filename, downloadLink, downloadCell) {
             .then(data => {
                 const finalDownloadLink = data.download;
                 const progress = 100;
-                updateDownloadProgress(id, filename, progress, finalDownloadLink);
+                updateDownloadProgress(id, filename, progress);
 
                 const downloadButton = document.createElement('button');
                 downloadButton.className = 'btn btn-success';
