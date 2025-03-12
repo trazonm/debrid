@@ -209,7 +209,7 @@ function displayDownloadItem(download, container) {
         <div class="card bg-transparent border-success ${isExpired ? 'border-danger' : ''}">
             <div class="card-body p-3 bg-transparent">
                 <div class="d-flex justify-content-between align-items-start">
-                    <div class="me-2 text-truncate">
+                    <div class="me-2 ">
                         <p class="card-title text-truncate mb-1 filename">${cleanFilename(download.filename)}</p>
                         <div class="card-text mb-1">
                             <span class="badge bg-secondary">${download.host || 'Unknown host'}</span>
